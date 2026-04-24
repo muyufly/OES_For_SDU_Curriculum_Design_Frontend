@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.teach.javafx.controller.StudentScoreController">
+    <top>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+            <children>
+                <Button text="刷新成绩" onAction="#doRefresh" styleClass="primary-button" />
+                <Label text="选择下方考试成绩可查看答题明细" />
+            </children>
+        </HBox>
+    </top>
+    <center>
+        <SplitPane dividerPositions="0.33,0.66">
+            <items>
+                <TableView fx:id="courseScoreTable">
+                    <columns>
+                        <TableColumn fx:id="courseNameColumn" text="课程" prefWidth="180" />
+                        <TableColumn fx:id="markColumn" text="成绩" prefWidth="90" />
+                    </columns>
+                </TableView>
+                <TableView fx:id="examScoreTable">
+                    <columns>
+                        <TableColumn fx:id="examTitleColumn" text="试卷" prefWidth="260" />
+                        <TableColumn fx:id="examScoreColumn" text="总分" prefWidth="80" />
+                        <TableColumn fx:id="examGradedColumn" text="已全部批改" prefWidth="110" />
+                    </columns>
+                </TableView>
+                <TableView fx:id="resultTable">
+                    <columns>
+                        <TableColumn fx:id="resultQuestionColumn" text="题目" prefWidth="320" />
+                        <TableColumn fx:id="resultAnswerColumn" text="我的答案" prefWidth="180" />
+                        <TableColumn fx:id="resultScoreColumn" text="得分" prefWidth="80" />
+                    </columns>
+                </TableView>
+            </items>
+        </SplitPane>
+    </center>
+</BorderPane>

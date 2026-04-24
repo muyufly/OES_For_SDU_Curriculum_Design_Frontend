@@ -2,67 +2,160 @@ package com.teach.javafx.controller.base;
 
 import com.teach.javafx.AppStore;
 import com.teach.javafx.MainApplication;
-import com.teach.javafx.request.*;
+import com.teach.javafx.request.DataRequest;
+import com.teach.javafx.request.DataResponse;
+import com.teach.javafx.request.HttpRequestUtil;
+import com.teach.javafx.request.LoginRequest;
+import com.teach.javafx.request.OptionItem;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
-import javafx.scene.control.Button;
+
 import java.io.IOException;
 
-/**
- * LoginController 登录交互控制类 对应 base/login-view.fxml
- *  @FXML  属性 对应fxml文件中的 fx:id 属性 如TextField usernameField 对应 fx:id="usernameField"
- *  @FXML 方法 对应于fxml文件中的 on***Click的属性  如onLoginButtonClick() 对应onAction="#onLoginButtonClick"
- */
 public class LoginController {
     @FXML
     private TextField usernameField;
     @FXML
-    private TextField passwordField;
+    private PasswordField passwordField;
     @FXML
     private VBox vbox;
-    /**
-     * 页面加载对象创建完成初始话方法，页面中控件属性的设置，初始数据显示等初始操作都在这里完成，其他代码都事件处理方法里
-     */
+    @FXML
+    private TextField registerUsernameField;
+    @FXML
+    private TextField registerPerNameField;
+    @FXML
+    private TextField registerEmailField;
+    @FXML
+    private ComboBox<OptionItem> registerRoleComboBox;
+    @FXML
+    private PasswordField registerPasswordField;
+    @FXML
+    private PasswordField registerConfirmPasswordField;
+
     @FXML
     public void initialize() {
-//        vbox.setId("min");  // id选择器 #
-//        vbox.getStyleClass().add("min");  类选择器 .
-        vbox.setStyle("-fx-background-image: url('shanda1.jpg'); -fx-background-repeat: no-repeat; -fx-background-size: cover;");  //inline选择器
-//        loginButton.setStyle("-fx-background-color: red; -fx-text-fill: white;");
+        vbox.getStyleClass().add("login-page");
+        registerRoleComboBox.getItems().clear();
+        registerRoleComboBox.getItems().add(new OptionItem(null, "STUDENT", "学生"));
+        registerRoleComboBox.getItems().add(new OptionItem(null, "TEACHER", "教师"));
+        registerRoleComboBox.getItems().add(new OptionItem(null, "ADMIN", "管理员"));
+        registerRoleComboBox.getSelectionModel().selectFirst();
     }
 
-    /**
-     *  点击登录按钮 执行onLoginButtonClick 方法 从面板上获取用户名和密码，请求后台登录服务，登录成功加载主框架，切换舞台到主框架，登录不成功，提示错误信息
-     */
+    @FXML
+    protected void onLoginButtonClick() {
+        onLoginButtonClick(usernameField.getText(), passwordField.getText());
+    }
+
     @FXML
     protected void onAdminLoginButtonClick() {
-        onLoginButtonClick("admin","123456");
+        onLoginButtonClick("admin_test", "123456");
     }
+
     @FXML
     protected void onStudentLoginButtonClick() {
-        onLoginButtonClick("2022030001","123456");
+        onLoginButtonClick("student_test", "123456");
     }
+
     @FXML
     protected void onTeacherLoginButtonClick() {
-        onLoginButtonClick("200799013517","123456");
+        onLoginButtonClick("teacher_test", "123456");
     }
-    protected void onLoginButtonClick(String username, String password) {
-        LoginRequest loginRequest = new LoginRequest(username,password);
+
+    @FXML
+    protected void onRegisterButtonClick() {
+        String username = registerUsernameField.getText();
+        String perName = registerPerNameField.getText();
+        String email = registerEmailField.getText();
+        OptionItem roleItem = registerRoleComboBox.getSelectionModel().getSelectedItem();
+        String password = registerPasswordField.getText();
+        String confirmPassword = registerConfirmPasswordField.getText();
+
+        if (username == null || username.isBlank() ||
+                perName == null || perName.isBlank() ||
+                password == null || password.isBlank() ||
+                confirmPassword == null || confirmPassword.isBlank()) {
+            MessageDialog.showDialog("请完整填写注册信息");
+            return;
+        }
+        username = username.trim();
+        perName = perName.trim();
+        email = email == null ? "" : email.trim();
+        if (username.length() > 20) {
+            MessageDialog.showDialog("用户名不能超过20个字符");
+            return;
+        }
+        if (perName.length() > 50) {
+            MessageDialog.showDialog("姓名不能超过50个字符");
+            return;
+        }
+        if (email.length() > 60) {
+            MessageDialog.showDialog("邮箱不能超过60个字符");
+            return;
+        }
+        if (!email.isBlank() && !email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+            MessageDialog.showDialog("邮箱格式不正确");
+            return;
+        }
+        if (!password.equals(confirmPassword)) {
+            MessageDialog.showDialog("两次输入的密码不一致");
+            return;
+        }
+        if (roleItem == null) {
+            MessageDialog.showDialog("请选择注册角色");
+            return;
+        }
+
+        DataRequest request = new DataRequest();
+        request.add("username", username);
+        request.add("password", password);
+        request.add("perName", perName);
+        request.add("email", email);
+        request.add("role", roleItem.getValue());
+
+        DataResponse response = HttpRequestUtil.request("/auth/registerUser", request);
+        if (response != null && response.getCode() == 0) {
+            MessageDialog.showDialog("注册成功，现在可以直接登录");
+            usernameField.setText(username);
+            passwordField.setText(password);
+            clearRegisterForm();
+            return;
+        }
+        MessageDialog.showDialog(response == null ? "注册失败" : response.getMsg());
+    }
+
+    private void onLoginButtonClick(String username, String password) {
+        if (username == null || username.isBlank() || password == null || password.isBlank()) {
+            MessageDialog.showDialog("请输入用户名和密码");
+            return;
+        }
+        LoginRequest loginRequest = new LoginRequest(username.trim(), password);
         String msg = HttpRequestUtil.login(loginRequest);
-        if(msg != null) {
-            MessageDialog.showDialog( msg);
+        if (msg != null) {
+            MessageDialog.showDialog(msg);
             return;
         }
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("base/main-frame.fxml"));
         try {
-            Scene scene = new Scene(fxmlLoader.load(), -1, -1);
+            Scene scene = new Scene(fxmlLoader.load(), 1280, 820);
             AppStore.setMainFrameController((MainFrameController) fxmlLoader.getController());
-            MainApplication.resetStage("教学管理系统", scene);
+            MainApplication.resetStage("OES 在线考试系统", scene);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void clearRegisterForm() {
+        registerUsernameField.clear();
+        registerPerNameField.clear();
+        registerEmailField.clear();
+        registerPasswordField.clear();
+        registerConfirmPasswordField.clear();
+        registerRoleComboBox.getSelectionModel().selectFirst();
     }
 }

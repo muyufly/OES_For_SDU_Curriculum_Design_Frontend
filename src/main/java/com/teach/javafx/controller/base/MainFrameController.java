@@ -2,6 +2,8 @@ package com.teach.javafx.controller.base;
 
 import com.teach.javafx.AppStore;
 import com.teach.javafx.MainApplication;
+import com.teach.javafx.request.DataRequest;
+import com.teach.javafx.request.DataResponse;
 import com.teach.javafx.request.HttpRequestUtil;
 import com.teach.javafx.request.MyTreeNode;
 import javafx.event.ActionEvent;
@@ -9,24 +11,14 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import com.teach.javafx.request.DataRequest;
-import com.teach.javafx.request.DataResponse;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-/**
- * MainFrameController 登录交互控制类 对应 base/main-frame.fxml
- *  @FXML  属性 对应fxml文件中的
- *  @FXML 方法 对应于fxml文件中的 on***Click的属性
- */
+import java.util.*;
+
 public class MainFrameController {
     class ChangePanelHandler implements EventHandler<ActionEvent> {
         @Override
@@ -34,211 +26,228 @@ public class MainFrameController {
             changeContent(actionEvent);
         }
     }
-    private Map<String,Tab> tabMap = new HashMap<String,Tab>();
-    private Map<String,Scene> sceneMap = new HashMap<String,Scene>();
-    private Map<String,ToolController> controlMap =new HashMap<String,ToolController>();
-    @FXML
-    private MenuBar menuBar;
-    @FXML
-    private TreeView<MyTreeNode> menuTree;
-    @FXML
-    protected TabPane contentTabPane;
-    @FXML
-    private Label systemPrompt;
 
-    private ChangePanelHandler handler= null;
+    private final Map<String, Tab> tabMap = new HashMap<>();
+    private final Map<String, Scene> sceneMap = new HashMap<>();
+    private final Map<String, ToolController> controlMap = new HashMap<>();
 
-    void addMenuItems(Menu parent, List<Map> mList) {
-        String name, title;
-        List sList;
-        Map ms;
-        Menu menu;
-        MenuItem item;
-        for ( Map m :mList) {
-            sList = (List<Map>)m.get("sList");
-            name = (String)m.get("name");
-            title = (String)m.get("title");
-            if(sList == null || sList.size()== 0) {
-                item = new MenuItem();
+    @FXML private MenuBar menuBar;
+    @FXML private TreeView<MyTreeNode> menuTree;
+    @FXML protected TabPane contentTabPane;
+    @FXML private Label systemPrompt;
+    @FXML private Label welcomeLabel;
+    @FXML private Label roleLabel;
+
+    private ChangePanelHandler handler = null;
+
+    void addMenuItems(Menu parent, List<Map> menuList) {
+        for (Map menuData : menuList) {
+            List<Map> childList = (List<Map>) menuData.get("sList");
+            String name = (String) menuData.get("name");
+            String title = (String) menuData.get("title");
+            if (childList == null || childList.isEmpty()) {
+                MenuItem item = new MenuItem();
                 item.setId(name);
                 item.setText(title);
                 item.setOnAction(this::changeContent);
                 parent.getItems().add(item);
-            }else {
-                menu = new Menu();
+            } else {
+                Menu menu = new Menu();
                 menu.setText(title);
-                addMenuItems(menu,sList);
+                addMenuItems(menu, childList);
                 parent.getItems().add(menu);
             }
         }
     }
 
-    /**
-     * 页面加载对象创建完成初始话方法，页面中控件属性的设置，初始数据显示等初始操作都在这里完成，其他代码都事件处理方法里
-     * 系统初始时为没个角色增加了框架已经实现好了基础管理的功能，采用代码显示添加的方法加入，加入完缺省的功能菜单后，通过
-     * HttpRequestUtil.request("/api/base/getMenuList",new DataRequest())加载用菜单管理功能，维护的菜单
-     * 项目开发过程中，同学可以扩该方法，增肌自己设计的功能菜单，也可以通过菜单管理程序添加菜单，框架自动加载菜单管理维护的菜单，
-     * 是新功能扩展
-     */
-    public void addMenuItem(Menu menu, String name, String title){
-        MenuItem item;
-        item = new MenuItem();
-        item.setText(title);
-        item.setId(name);
-        item.setOnAction(this::changeContent);
-        menu.getItems().add(item);
-    }
-    public void initMenuBar(List<Map> mList){
-        Menu menu;
-        Map m;
-        int i;
-        List<Map> sList;
-        for(i = 0; i < mList.size();i++) {
-            m = mList.get(i);
-            sList = (List<Map>)m.get("sList");
-            menu = new Menu();
-            menu.setText((String)m.get("title"));
-            if(sList != null && sList.size()> 0) {
-                addMenuItems(menu,sList);
+    public void initMenuBar(List<Map> menuList) {
+        menuBar.getMenus().clear();
+        for (Map menuData : menuList) {
+            List<Map> childList = (List<Map>) menuData.get("sList");
+            Menu menu = new Menu();
+            menu.setText((String) menuData.get("title"));
+            if (childList != null && !childList.isEmpty()) {
+                addMenuItems(menu, childList);
             }
             menuBar.getMenus().add(menu);
         }
     }
-    void addMenuItems( TreeItem<MyTreeNode> parent, List<Map> mList) {
-        List sList;
-        TreeItem<MyTreeNode> menu;
-        for ( Map m :mList) {
-            sList = (List<Map>)m.get("sList");
-            menu = new TreeItem<>(new MyTreeNode(null,(String)m.get("name") ,(String)m.get("title"),0));
+
+    void addMenuItems(TreeItem<MyTreeNode> parent, List<Map> menuList) {
+        for (Map menuData : menuList) {
+            List<Map> childList = (List<Map>) menuData.get("sList");
+            TreeItem<MyTreeNode> menu = new TreeItem<>(new MyTreeNode(null, (String) menuData.get("name"), (String) menuData.get("title"), 0));
             parent.getChildren().add(menu);
-            if(sList !=  null && sList.size()> 0) {
-                addMenuItems(menu, sList);
+            if (childList != null && !childList.isEmpty()) {
+                addMenuItems(menu, childList);
             }
         }
     }
 
-    public void initMenuTree(List<Map> mList) {
-        String role = AppStore.getJwt().getRole();
-        MyTreeNode node = new MyTreeNode(null, null,"菜单",0);
-        TreeItem<MyTreeNode> root = new TreeItem<>(node);
-        TreeItem<MyTreeNode>  menu;
-        int i,j;
-        Map m;
-        List<Map> sList;
-        for(i = 0; i < mList.size();i++) {
-            m = mList.get(i);
-            sList = (List<Map>)m.get("sList");
-            menu = new TreeItem<>(new MyTreeNode(null, (String)m.get("name"), (String)m.get("title"), (Integer)m.get("isLeft")));
-            if(sList != null && sList.size()> 0) {
-                addMenuItems(menu,sList);
+    public void initMenuTree(List<Map> menuList) {
+        TreeItem<MyTreeNode> root = new TreeItem<>(new MyTreeNode(null, null, "菜单", 0));
+        for (Map menuData : menuList) {
+            List<Map> childList = (List<Map>) menuData.get("sList");
+            TreeItem<MyTreeNode> menu = new TreeItem<>(new MyTreeNode(null, (String) menuData.get("name"), (String) menuData.get("title"), 0));
+            if (childList != null && !childList.isEmpty()) {
+                addMenuItems(menu, childList);
             }
             root.getChildren().add(menu);
         }
         menuTree.setRoot(root);
         menuTree.setShowRoot(false);
-        menuTree.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
-            public void handle(MouseEvent event){
-                Node node = event.getPickResult().getIntersectedNode();
-                TreeItem<MyTreeNode> treeItem = menuTree.getSelectionModel().getSelectedItem();
-                if(treeItem == null)
-                    return;
-                MyTreeNode menu = treeItem.getValue();
-                if(menu == null)
-                    return;
-                String name = menu.getValue();
-                if(name == null || name.length() == 0)
-                    return ;
-                if("logout".equals(name)) {
-                    logout();
-                }else if(name.endsWith("Command")){
-                    try {
-                        Method m = this.getClass().getMethod(name);
-                        m.invoke(this);
-                    }catch(Exception e) {
-                        e.printStackTrace();
-                    }
-                }else {
-                    changeContent(name,menu.getLabel());
+        menuTree.addEventFilter(MouseEvent.MOUSE_CLICKED, event -> {
+            TreeItem<MyTreeNode> treeItem = menuTree.getSelectionModel().getSelectedItem();
+            if (treeItem == null || treeItem.getValue() == null) {
+                return;
+            }
+            MyTreeNode menu = treeItem.getValue();
+            String name = menu.getValue();
+            if (name == null || name.isEmpty()) {
+                return;
+            }
+            if ("logout".equals(name)) {
+                logout();
+            } else if (name.endsWith("Command")) {
+                try {
+                    Method method = this.getClass().getMethod(name);
+                    method.invoke(this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    MessageDialog.showDialog("命令执行失败：" + name);
                 }
+            } else {
+                changeContent(name, menu.getLabel());
             }
         });
     }
+
     @FXML
     public void initialize() {
-        handler =new ChangePanelHandler();
-        DataRequest req= new DataRequest();
-        DataResponse res;
-        res = HttpRequestUtil.request("/api/base/getDataBaseUserName",req);
-        String userName = (String)res.getData();
-        systemPrompt.setText("服务器：" + HttpRequestUtil.serverUrl + " 数据库：" + userName);
-        res = HttpRequestUtil.request("/api/base/getMenuList",req);
-        List<Map> mList = (List<Map>)res.getData();
-        initMenuBar(mList);
-        initMenuTree(mList);
+        handler = new ChangePanelHandler();
+        welcomeLabel.setText("你好，" + AppStore.getDisplayName());
+        roleLabel.setText(AppStore.getJwt() == null ? "" : AppStore.getJwt().getRole());
+
+        DataRequest req = new DataRequest();
+        DataResponse dbResponse = HttpRequestUtil.request("/api/base/getDataBaseUserName", req);
+        String userName = dbResponse != null && dbResponse.getData() != null ? dbResponse.getData().toString() : "未知";
+        systemPrompt.setText("服务地址：" + HttpRequestUtil.serverUrl + "  数据库：" + userName);
+
+        DataResponse menuResponse = HttpRequestUtil.request("/api/base/getMenuList", req);
+        if (menuResponse == null || menuResponse.getCode() != 0 || !(menuResponse.getData() instanceof List<?>)) {
+            MessageDialog.showDialog(menuResponse == null ? "菜单加载失败" : menuResponse.getMsg());
+            return;
+        }
+        List<Map> menuList = (List<Map>) menuResponse.getData();
+        addExamMenus(menuList);
+        initMenuBar(menuList);
+        initMenuTree(menuList);
         contentTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
-        contentTabPane.setStyle("-fx-background-image: url('shanda1.jpg'); -fx-background-repeat: no-repeat; -fx-background-size: cover;");  //inline选择器
-
-
     }
 
+    private void addExamMenus(List<Map> menuList) {
+        String role = AppStore.getJwt() == null ? "" : AppStore.getJwt().getRole();
+        if (role.contains("TEACHER")) {
+            Map root = menuRoot("考试管理");
+            addChild(root, "teacher-exam-panel", "试卷管理");
+            addChild(root, "teacher-grade-panel", "试卷批改");
+            addChild(root, "teacher-score-panel", "学生成绩管理");
+            mergeRoot(menuList, root);
+        }
+        if (role.contains("STUDENT")) {
+            Map root = menuRoot("我的考试");
+            addChild(root, "student-exam-panel", "获取试卷");
+            addChild(root, "student-score-panel", "我的成绩");
+            mergeRoot(menuList, root);
+        }
+    }
 
-    /**
-     * 点击菜单栏中的“退出”菜单，执行onLogoutMenuClick方法 加载登录页面，切换回登录界面
-     * @param event
-     */
-    protected void onLogoutMenuClick(ActionEvent event){
+    private Map menuRoot(String title) {
+        Map<String, Object> root = new LinkedHashMap<>();
+        root.put("name", "");
+        root.put("title", title);
+        root.put("sList", new ArrayList<Map>());
+        return root;
+    }
+
+    private void addChild(Map root, String name, String title) {
+        List<Map> children = (List<Map>) root.get("sList");
+        Map<String, Object> child = new LinkedHashMap<>();
+        child.put("name", name);
+        child.put("title", title);
+        child.put("sList", new ArrayList<Map>());
+        children.add(child);
+    }
+
+    private void mergeRoot(List<Map> menuList, Map root) {
+        String title = (String) root.get("title");
+        for (Map existing : menuList) {
+            if (!title.equals(existing.get("title"))) {
+                continue;
+            }
+            List<Map> existingChildren = (List<Map>) existing.get("sList");
+            if (existingChildren == null) {
+                existingChildren = new ArrayList<>();
+                existing.put("sList", existingChildren);
+            }
+            for (Map child : (List<Map>) root.get("sList")) {
+                boolean exists = existingChildren.stream().anyMatch(c -> child.get("name").equals(c.get("name")));
+                if (!exists) {
+                    existingChildren.add(child);
+                }
+            }
+            return;
+        }
+        menuList.add(root);
+    }
+
+    protected void onLogoutMenuClick(ActionEvent event) {
         logout();
     }
 
-    protected void logout(){
+    @FXML
+    protected void onLogoutButtonClick() {
+        logout();
+    }
+
+    protected void logout() {
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("base/login-view.fxml"));
         try {
-            Scene scene = new Scene(fxmlLoader.load(), 320, 240);
-            MainApplication.loginStage("Login", scene);
+            Scene scene = new Scene(fxmlLoader.load(), 960, 640);
+            AppStore.setJwt(null);
+            MainApplication.loginStage("OES 登录", scene);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public  void changeContent(ActionEvent ae) {
+    public void changeContent(ActionEvent ae) {
         Object obj = ae.getSource();
-        String name= null, title= null;
-        if(obj instanceof MenuItem) {
-            MenuItem item = (MenuItem)obj;
-            name = item.getId();
-            title = item.getText();
+        if (obj instanceof MenuItem item) {
+            changeContent(item.getId(), item.getText());
         }
-        if(name == null)
-            return;
-        changeContent(name,title);
     }
 
-    /**
-     * 点击菜单栏中的菜单 执行changeContent 在主框架工作区增加和显示一个工作面板
-     * @param name  菜单名 name.fxml 对应面板的配置文件
-     * @param title 菜单标题 工作区中的TablePane的标题
-     */
-
-    public  void changeContent(String name, String title) {
-        if(name == null || name.length() == 0)
+    public void changeContent(String name, String title) {
+        if (name == null || name.isEmpty()) {
             return;
+        }
         Tab tab = tabMap.get(name);
-        Scene scene;
-        Object c;
-        if(tab == null) {
-            scene = sceneMap.get(name);
-            if(scene == null) {
+        if (tab == null) {
+            Scene scene = sceneMap.get(name);
+            if (scene == null) {
                 FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(name + ".fxml"));
                 try {
                     scene = new Scene(fxmlLoader.load(), 1024, 768);
                     sceneMap.put(name, scene);
                 } catch (IOException e) {
                     e.printStackTrace();
+                    MessageDialog.showDialog("页面加载失败：" + name);
                     return;
                 }
-                c = fxmlLoader.getController();
-                if(c instanceof ToolController) {
-                    controlMap.put(name,(ToolController)c);
+                Object controller = fxmlLoader.getController();
+                if (controller instanceof ToolController toolController) {
+                    controlMap.put(name, toolController);
                 }
             }
             tab = new Tab(title);
@@ -253,110 +262,67 @@ public class MainFrameController {
     }
 
     public void tabSelectedChanged(Event e) {
-        Tab tab = (Tab)e.getSource();
-        String name = tab.getId();
-        ToolController c = controlMap.get(name);
-        if(c != null)
-            c.doRefresh();
-//        Node node =tab.getContent();
-//        Scene scene = node.getScene();
-
+        Tab tab = (Tab) e.getSource();
+        ToolController controller = controlMap.get(tab.getId());
+        if (controller != null) {
+            controller.doRefresh();
+        }
     }
 
-    /**
-     * 点击TablePane 标签页 的关闭图标 执行tabOnClosed方法
-     * @param e
-     */
-
     public void tabOnClosed(Event e) {
-        Tab tab = (Tab)e.getSource();
+        Tab tab = (Tab) e.getSource();
         String name = tab.getId();
         contentTabPane.getTabs().remove(tab);
         tabMap.remove(name);
     }
-    /**
-     * ToolController getCurrentToolController() 获取当前显示的面板的控制对象， 如果面板响应编辑菜单中的编辑命名，交互控制需要继承 ToolController， 重写里面的方法
-     * @return
-     */
-    public ToolController getCurrentToolController(){
-        Iterator<String> iterator = controlMap.keySet().iterator();
-        String name;
-        Tab tab;
-        while(iterator.hasNext()) {
-            name = iterator.next();
-            tab = tabMap.get(name);
-            if(tab.isSelected()) {
+
+    public ToolController getCurrentToolController() {
+        for (String name : controlMap.keySet()) {
+            Tab tab = tabMap.get(name);
+            if (tab != null && tab.isSelected()) {
                 return controlMap.get(name);
             }
         }
         return null;
     }
-    /**
-     * 点击编辑菜单中的“新建”菜单，执行doNewCommand方法， 执行当前显示的面板对应的控制类中的doNew()方法
-     */
-    protected  void doNewCommand(){
-        ToolController c = getCurrentToolController();
-        if(c == null)
-            return;
-        c.doNew();
+
+    protected void doNewCommand() {
+        ToolController controller = getCurrentToolController();
+        if (controller != null) controller.doNew();
     }
-    /**
-     * 点击编辑菜单中的“保存”菜单，执行doSaveCommand方法， 执行当前显示的面板对应的控制类中的doSave()方法
-     */
-    protected  void doSaveCommand(){
-        ToolController c = getCurrentToolController();
-        if(c == null)
-            return;
-        c.doSave();
+
+    protected void doSaveCommand() {
+        ToolController controller = getCurrentToolController();
+        if (controller != null) controller.doSave();
     }
-    /**
-     * 点击编辑菜单中的“删除”菜单，执行doDeleteCommand方法， 执行当前显示的面板对应的控制类中的doDelete()方法
-     */
-    protected  void doDeleteCommand(){
-        ToolController c = getCurrentToolController();
-        if(c == null)
-            return;
-        c.doDelete();
+
+    protected void doDeleteCommand() {
+        ToolController controller = getCurrentToolController();
+        if (controller != null) controller.doDelete();
     }
-    /**
-     * 点击编辑菜单中的“打印”菜单，执行doPrintCommand方法， 执行当前显示的面板对应的控制类中的doPrint()方法
-     */
-    protected  void doPrintCommand(){
-        ToolController c = getCurrentToolController();
-        if(c == null)
-            return;
-        c.doPrint();
+
+    protected void doPrintCommand() {
+        ToolController controller = getCurrentToolController();
+        if (controller != null) controller.doPrint();
     }
-    /**
-     * 点击编辑菜单中的“导出”菜单，执行doExportCommand方法， 执行当前显示的面板对应的控制类中的doExport方法
-     */
-    protected  void doExportCommand(){
-        ToolController c = getCurrentToolController();
-        if(c == null)
-            return;
-        c.doExport();
+
+    protected void doExportCommand() {
+        ToolController controller = getCurrentToolController();
+        if (controller != null) controller.doExport();
     }
-    /**
-     * 点击编辑菜单中的“导入”菜单，执行doImportCommand方法， 执行当前显示的面板对应的控制类中的doImport()方法
-     */
-    protected  void doImportCommand(){
-        ToolController c = getCurrentToolController();
-        if(c == null)
-            return;
-        c.doImport();
+
+    protected void doImportCommand() {
+        ToolController controller = getCurrentToolController();
+        if (controller != null) controller.doImport();
     }
-    /**
-     * 点击编辑菜单中的“测试”菜单，执行doTestCommand方法， 执行当前显示的面板对应的控制类中的doImport()方法
-     */
-    protected  void doTestCommand(){
-        ToolController c = getCurrentToolController();
-        if(c == null) {
-            c= new ToolController(){
-            };
-        }
-        c.doTest();
+
+    protected void doTestCommand() {
+        ToolController controller = getCurrentToolController();
+        if (controller == null) controller = new ToolController() {};
+        controller.doTest();
     }
-    public ToolController getToolController(String name){
-        return  controlMap.get(name);
+
+    public ToolController getToolController(String name) {
+        return controlMap.get(name);
     }
 }

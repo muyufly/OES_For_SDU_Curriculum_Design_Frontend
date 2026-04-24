@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.teach.javafx.controller.TeacherGradeController">
+    <top>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+            <children>
+                <Label text="选择试卷" />
+                <ComboBox fx:id="examComboBox" prefWidth="320" />
+                <Button text="刷新记录" onAction="#loadRecords" styleClass="secondary-button" />
+            </children>
+        </HBox>
+    </top>
+    <center>
+        <SplitPane dividerPositions="0.48">
+            <items>
+                <TableView fx:id="recordTable">
+                    <columns>
+                        <TableColumn fx:id="studentColumn" text="学生" prefWidth="120" />
+                        <TableColumn fx:id="typeColumn" text="题型" prefWidth="80" />
+                        <TableColumn fx:id="scoreColumn" text="得分" prefWidth="80" />
+                        <TableColumn fx:id="gradedColumn" text="已批改" prefWidth="90" />
+                    </columns>
+                </TableView>
+                <VBox spacing="10">
+                    <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+                    <children>
+                        <Label text="题目" styleClass="field-label" />
+                        <TextArea fx:id="questionArea" editable="false" prefRowCount="5" />
+                        <Label text="学生答案" styleClass="field-label" />
+                        <TextArea fx:id="answerArea" editable="false" prefRowCount="6" VBox.vgrow="ALWAYS" />
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <children>
+                                <Label text="分数" />
+                                <TextField fx:id="scoreField" prefWidth="120" />
+                                <Button text="提交批改" onAction="#onGrade" styleClass="primary-button" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </items>
+        </SplitPane>
+    </center>
+</BorderPane>

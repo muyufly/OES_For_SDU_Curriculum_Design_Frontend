@@ -1,12 +1,4 @@
 package com.teach.javafx.request;
-/**
- * JwtResponse JWT数据返回对象 包含客户登录的信息
- * String tokenType token字符串
- * Integer id 用户的ID user_id
- * String username 用户的登录名
- * String accessToken 登录客户加密数据串 请求是要传到后端进行权限验证
- * String roles 用户角色 ROLE_ADMIN, ROLE_STUDENT, ROLE_TEACHER
- */
 
 public class JwtResponse {
     private String tokenType;
@@ -14,6 +6,8 @@ public class JwtResponse {
     private String username;
     private String token;
     private String role;
+    private String perName;
+    private String serverName;
 
     public String getTokenType() {
         return tokenType;
@@ -53,5 +47,28 @@ public class JwtResponse {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getPerName() {
+        return perName;
+    }
+
+    public void setPerName(String perName) {
+        this.perName = perName;
+    }
+
+    public String getServerName() {
+        return serverName;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
+    }
+
+    public String getDisplayName() {
+        if (perName != null && !perName.isBlank()) {
+            return perName;
+        }
+        return username;
     }
 }

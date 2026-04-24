@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.teach.javafx.controller.TeacherExamController">
+    <top>
+        <VBox spacing="10.0" styleClass="auth-form">
+            <padding><Insets bottom="12" left="12" right="12" top="12" /></padding>
+            <children>
+                <Label text="试卷上传：JSON/CSV/Markdown；CSV 元信息由下方字段提供" styleClass="field-label" />
+                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                    <children>
+                        <TextField fx:id="uploadTitleField" promptText="CSV 标题" HBox.hgrow="ALWAYS" />
+                        <ComboBox fx:id="uploadCourseComboBox" promptText="课程" prefWidth="150" />
+                        <TextField fx:id="uploadStartField" promptText="开始时间 yyyy-MM-dd HH:mm:ss" prefWidth="190" />
+                        <TextField fx:id="uploadEndField" promptText="结束时间 yyyy-MM-dd HH:mm:ss" prefWidth="190" />
+                        <ComboBox fx:id="uploadStatusComboBox" prefWidth="100" />
+                        <Button text="选择文件" onAction="#onChooseFile" styleClass="secondary-button" />
+                        <Button text="上传试卷" onAction="#onUploadExam" styleClass="primary-button" />
+                    </children>
+                </HBox>
+                <Label fx:id="uploadFileLabel" text="未选择文件" />
+            </children>
+        </VBox>
+    </top>
+    <center>
+        <SplitPane dividerPositions="0.34">
+            <items>
+                <VBox spacing="8.0">
+                    <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+                    <children>
+                        <Label text="我的试卷" styleClass="sidebar-title" />
+                        <TableView fx:id="examTable" VBox.vgrow="ALWAYS">
+                            <columns>
+                                <TableColumn fx:id="examIdColumn" text="ID" prefWidth="50" />
+                                <TableColumn fx:id="examTitleColumn" text="标题" prefWidth="190" />
+                                <TableColumn fx:id="examCourseColumn" text="课程" prefWidth="120" />
+                                <TableColumn fx:id="examStatusColumn" text="状态" prefWidth="80" />
+                            </columns>
+                        </TableView>
+                    </children>
+                </VBox>
+                <VBox spacing="10.0">
+                    <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+                    <children>
+                        <GridPane hgap="8" vgap="8">
+                            <columnConstraints>
+                                <ColumnConstraints percentWidth="12" />
+                                <ColumnConstraints percentWidth="38" />
+                                <ColumnConstraints percentWidth="12" />
+                                <ColumnConstraints percentWidth="38" />
+                            </columnConstraints>
+                            <children>
+                                <Label text="标题" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                                <TextField fx:id="titleField" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                                <Label text="课程" GridPane.rowIndex="0" GridPane.columnIndex="2" />
+                                <ComboBox fx:id="courseComboBox" maxWidth="1.7976931348623157E308" GridPane.rowIndex="0" GridPane.columnIndex="3" />
+                                <Label text="开始" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                                <TextField fx:id="startTimeField" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                                <Label text="结束" GridPane.rowIndex="1" GridPane.columnIndex="2" />
+                                <TextField fx:id="endTimeField" GridPane.rowIndex="1" GridPane.columnIndex="3" />
+                                <Label text="状态" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                                <ComboBox fx:id="statusComboBox" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                                <Button text="保存试卷" onAction="#onSaveExam" styleClass="primary-button" GridPane.rowIndex="2" GridPane.columnIndex="3" />
+                            </children>
+                        </GridPane>
+                        <SplitPane dividerPositions="0.46" VBox.vgrow="ALWAYS">
+                            <items>
+                                <TableView fx:id="questionTable">
+                                    <columns>
+                                        <TableColumn fx:id="questionIdColumn" text="ID" prefWidth="50" />
+                                        <TableColumn fx:id="questionTypeColumn" text="类型" prefWidth="70" />
+                                        <TableColumn fx:id="questionContentColumn" text="题干" prefWidth="260" />
+                                        <TableColumn fx:id="questionScoreColumn" text="分值" prefWidth="60" />
+                                    </columns>
+                                </TableView>
+                                <VBox spacing="8.0">
+                                    <children>
+                                        <ComboBox fx:id="questionTypeComboBox" />
+                                        <TextArea fx:id="questionContentArea" promptText="题干" prefRowCount="5" VBox.vgrow="ALWAYS" />
+                                        <TextField fx:id="optionAField" promptText="选项 A" />
+                                        <TextField fx:id="optionBField" promptText="选项 B" />
+                                        <TextField fx:id="optionCField" promptText="选项 C" />
+                                        <TextField fx:id="optionDField" promptText="选项 D" />
+                                        <HBox spacing="8">
+                                            <children>
+                                                <TextField fx:id="answerField" promptText="答案" HBox.hgrow="ALWAYS" />
+                                                <TextField fx:id="scoreField" promptText="分值" prefWidth="90" />
+                                            </children>
+                                        </HBox>
+                                        <HBox spacing="8">
+                                            <children>
+                                                <Button text="保存题目" onAction="#onSaveQuestion" styleClass="primary-button" />
+                                                <Button text="删除题目" onAction="#onDeleteQuestion" styleClass="secondary-button" />
+                                            </children>
+                                        </HBox>
+                                    </children>
+                                </VBox>
+                            </items>
+                        </SplitPane>
+                    </children>
+                </VBox>
+            </items>
+        </SplitPane>
+    </center>
+</BorderPane>

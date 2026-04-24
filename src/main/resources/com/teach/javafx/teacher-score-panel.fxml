@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.teach.javafx.controller.TeacherScoreController">
+    <top>
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+            <children>
+                <ComboBox fx:id="examComboBox" prefWidth="300" promptText="选择试卷或查看课程成绩" />
+                <TextField fx:id="classField" promptText="班级筛选" prefWidth="150" />
+                <TextField fx:id="keywordField" promptText="学号/姓名" prefWidth="160" />
+                <Button text="查询" onAction="#onQuery" styleClass="primary-button" />
+            </children>
+        </HBox>
+    </top>
+    <center>
+        <TableView fx:id="scoreTable">
+            <columns>
+                <TableColumn fx:id="studentNumColumn" text="学号" prefWidth="120" />
+                <TableColumn fx:id="studentNameColumn" text="姓名" prefWidth="120" />
+                <TableColumn fx:id="classNameColumn" text="班级" prefWidth="140" />
+                <TableColumn fx:id="courseColumn" text="课程" prefWidth="160" />
+                <TableColumn fx:id="examColumn" text="试卷" prefWidth="220" />
+                <TableColumn fx:id="markColumn" text="成绩" prefWidth="90" />
+                <TableColumn fx:id="gradedColumn" text="已全部批改" prefWidth="110" />
+            </columns>
+        </TableView>
+    </center>
+</BorderPane>

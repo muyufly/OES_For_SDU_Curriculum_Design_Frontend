@@ -1,22 +1,23 @@
 package com.teach.javafx.request;
 
-import com.teach.javafx.AppStore;
 import com.google.gson.Gson;
+import com.teach.javafx.AppStore;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.URI;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.nio.file.Path;
 import java.util.Map;
+import java.util.UUID;
 
 /**
- * HttpRequestUtil 后台请求实例程序，主要实践向后台发送请求的方法
- *  static boolean isLocal 业务处理程序实现方式 false java-server实现 前端程序通过下面的方法把数据发送后台程序，后台返回前端需要的数据，true 本地方式 业务处理 在SQLiteJDBC 实现
- *  String serverUrl = "http://localhost:9090" 后台服务的机器地址和端口号
+ * Frontend HTTP helper for talking to the Spring Boot backend.
  */
 public class HttpRequestUtil {
     private static final Gson gson = new Gson();
@@ -24,85 +25,176 @@ public class HttpRequestUtil {
     public static String serverUrl = "http://localhost:22222";
 //    public static String serverUrl = "http://202.194.7.29:22222";
 
-    /**
-     *  应用关闭是需要做关闭处理
-     */
-    public static void close(){
+    public static void close() {
     }
 
-    /**
-     * String login(LoginRequest request)  用户登录请求实现
-     * @param request  username 登录账号 password 登录密码
-     * @return  返回null 登录成功 AppStore注册登录账号信息 非空，登录错误信息
-     */
-
-    public static String login(LoginRequest request){
-            HttpRequest httpRequest = HttpRequest.newBuilder()
-                    .uri(URI.create(serverUrl + "/auth/login"))
-                    .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(request)))
-                    .headers("Content-Type", "application/json")
-                    .build();
-            try {
-                HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-                System.out.println("response.statusCode===="+response.statusCode());
-                if (response.statusCode() == 200) {
-                    JwtResponse jwt = gson.fromJson(response.body(), JwtResponse.class);
-                    AppStore.setJwt(jwt);
-                    return null;
-                } else if (response.statusCode() == 401) {
-                    return "用户名或密码不存在！";
-                }
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
-        return "登录失败";
+    private static String getAuthorizationHeader() {
+        if (AppStore.getJwt() == null || AppStore.getJwt().getToken() == null || AppStore.getJwt().getToken().isBlank()) {
+            return null;
+        }
+        return "Bearer " + AppStore.getJwt().getToken();
     }
 
-    /**
-     * DataResponse request(String url,DataRequest request) 一般数据请求业务的实现
-     * @param url  Web请求的Url 对用后的 RequestMapping
-     * @param request 请求参数对象
-     * @return DataResponse 返回后台返回数据
-     */
-    public static DataResponse request(String url, DataRequest request){
-            HttpRequest httpRequest = HttpRequest.newBuilder()
-                    .uri(URI.create(serverUrl + url))
-                    .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(request)))
-                    .headers("Content-Type", "application/json")
-                    .headers("Authorization", "Bearer " + AppStore.getJwt().getToken())
-                    .build();
-            request.add("username",AppStore.getJwt().getUsername());
-            HttpClient client = HttpClient.newHttpClient();
-            try {
-                HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-                System.out.println("url=" + url +"    response.statusCode="+response.statusCode());
-                if (response.statusCode() == 200) {
-                    //                System.out.println(response.body());
-                    return gson.fromJson(response.body(), DataResponse.class);
-                }
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
-        return null;
+    private static void attachUsername(DataRequest request) {
+        if (request == null) {
+            return;
+        }
+        if (AppStore.getJwt() != null && AppStore.getJwt().getUsername() != null) {
+            request.add("username", AppStore.getJwt().getUsername());
+        }
     }
 
-    /**
-     *  MyTreeNode requestTreeNode(String url, DataRequest request) 获取树节点对象
-     * @param url  Web请求的Url 对用后的 RequestMapping
-     * @param request 请求参数对象
-     * @return MyTreeNode 返回后台返回数据
-     */
-    public static MyTreeNode requestTreeNode(String url, DataRequest request){
-        HttpRequest httpRequest = HttpRequest.newBuilder()
+    private static HttpRequest buildJsonRequest(String url, DataRequest request) {
+        DataRequest actualRequest = request == null ? new DataRequest() : request;
+        attachUsername(actualRequest);
+
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + url))
+                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(actualRequest)))
+                .header("Content-Type", "application/json");
+
+        String authorization = getAuthorizationHeader();
+        if (authorization != null) {
+            builder.header("Authorization", authorization);
+        }
+        return builder.build();
+    }
+
+    private static DataResponse buildErrorResponse(String msg) {
+        return new DataResponse(1, null, msg);
+    }
+
+    private static HttpRequest.Builder authorizedBuilder(String url) {
+        HttpRequest.Builder builder = HttpRequest.newBuilder()
+                .uri(URI.create(serverUrl + url));
+        String authorization = getAuthorizationHeader();
+        if (authorization != null) {
+            builder.header("Authorization", authorization);
+        }
+        return builder;
+    }
+
+    public static String login(LoginRequest request) {
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                .uri(URI.create(serverUrl + "/auth/login"))
                 .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(request)))
-                .headers("Content-Type", "application/json")
-                .headers("Authorization", "Bearer "+AppStore.getJwt().getToken())
+                .header("Content-Type", "application/json")
                 .build();
-        HttpClient client = HttpClient.newHttpClient();
         try {
-            HttpResponse<String>  response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            if(response.statusCode() == 200) {
+            HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            System.out.println("response.statusCode====" + response.statusCode());
+            if (response.statusCode() == 200) {
+                JwtResponse jwt = gson.fromJson(response.body(), JwtResponse.class);
+                AppStore.setJwt(jwt);
+                return null;
+            }
+            if (response.statusCode() == 401) {
+                return "用户名或密码错误";
+            }
+            return "登录失败，状态码：" + response.statusCode();
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return "无法连接后端服务：" + serverUrl;
+        }
+    }
+
+    public static DataResponse request(String url, DataRequest request) {
+        HttpRequest httpRequest = buildJsonRequest(url, request);
+        try {
+            HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            System.out.println("url=" + url + "    response.statusCode=" + response.statusCode());
+            if (response.statusCode() == 200) {
+                return gson.fromJson(response.body(), DataResponse.class);
+            }
+            if (response.statusCode() == 401) {
+                return buildErrorResponse("登录已失效，请重新登录");
+            }
+            return buildErrorResponse("请求失败，状态码：" + response.statusCode());
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return buildErrorResponse("请求失败，无法连接后端服务：" + serverUrl);
+        }
+    }
+
+    public static DataResponse get(String url) {
+        HttpRequest httpRequest = authorizedBuilder(url).GET().build();
+        return sendForDataResponse(httpRequest, "GET " + url);
+    }
+
+    public static DataResponse put(String url, DataRequest request) {
+        DataRequest actualRequest = request == null ? new DataRequest() : request;
+        attachUsername(actualRequest);
+        HttpRequest httpRequest = authorizedBuilder(url)
+                .PUT(HttpRequest.BodyPublishers.ofString(gson.toJson(actualRequest)))
+                .header("Content-Type", "application/json")
+                .build();
+        return sendForDataResponse(httpRequest, "PUT " + url);
+    }
+
+    public static DataResponse delete(String url) {
+        HttpRequest httpRequest = authorizedBuilder(url).DELETE().build();
+        return sendForDataResponse(httpRequest, "DELETE " + url);
+    }
+
+    private static DataResponse sendForDataResponse(HttpRequest httpRequest, String label) {
+        try {
+            HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            System.out.println(label + " response.statusCode=" + response.statusCode());
+            if (response.statusCode() == 200) {
+                return gson.fromJson(response.body(), DataResponse.class);
+            }
+            if (response.statusCode() == 401 || response.statusCode() == 403) {
+                return buildErrorResponse("没有权限或登录已失效，请重新登录");
+            }
+            return buildErrorResponse("请求失败，状态码：" + response.statusCode());
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return buildErrorResponse("请求失败，无法连接后端服务：" + serverUrl);
+        }
+    }
+
+    public static DataResponse uploadMultipart(String uri, String fileName, Map<String, String> params) {
+        try {
+            String boundary = "----OES" + UUID.randomUUID();
+            byte[] fileBytes = java.nio.file.Files.readAllBytes(Path.of(fileName));
+            StringBuilder prefix = new StringBuilder();
+            if (params != null) {
+                for (Map.Entry<String, String> entry : params.entrySet()) {
+                    if (entry.getValue() == null || entry.getValue().isBlank()) {
+                        continue;
+                    }
+                    prefix.append("--").append(boundary).append("\r\n")
+                            .append("Content-Disposition: form-data; name=\"").append(entry.getKey()).append("\"\r\n\r\n")
+                            .append(entry.getValue()).append("\r\n");
+                }
+            }
+            String safeName = URLEncoder.encode(Path.of(fileName).getFileName().toString(), StandardCharsets.UTF_8)
+                    .replace("+", "%20");
+            prefix.append("--").append(boundary).append("\r\n")
+                    .append("Content-Disposition: form-data; name=\"file\"; filename=\"").append(safeName).append("\"\r\n")
+                    .append("Content-Type: application/octet-stream\r\n\r\n");
+            byte[] prefixBytes = prefix.toString().getBytes(StandardCharsets.UTF_8);
+            byte[] suffixBytes = ("\r\n--" + boundary + "--\r\n").getBytes(StandardCharsets.UTF_8);
+            byte[] body = new byte[prefixBytes.length + fileBytes.length + suffixBytes.length];
+            System.arraycopy(prefixBytes, 0, body, 0, prefixBytes.length);
+            System.arraycopy(fileBytes, 0, body, prefixBytes.length, fileBytes.length);
+            System.arraycopy(suffixBytes, 0, body, prefixBytes.length + fileBytes.length, suffixBytes.length);
+            HttpRequest httpRequest = authorizedBuilder(uri)
+                    .POST(HttpRequest.BodyPublishers.ofByteArray(body))
+                    .header("Content-Type", "multipart/form-data; boundary=" + boundary)
+                    .build();
+            return sendForDataResponse(httpRequest, "UPLOAD " + uri);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return buildErrorResponse("上传失败，无法读取文件：" + fileName);
+        }
+    }
+
+    public static MyTreeNode requestTreeNode(String url, DataRequest request) {
+        HttpRequest httpRequest = buildJsonRequest(url, request);
+        try {
+            HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
                 return gson.fromJson(response.body(), MyTreeNode.class);
             }
         } catch (IOException | InterruptedException e) {
@@ -111,85 +203,49 @@ public class HttpRequestUtil {
         return null;
     }
 
-    public static List<MyTreeNode> requestTreeNodeList(String url, DataRequest request){
-        HttpRequest httpRequest = HttpRequest.newBuilder()
-                .uri(URI.create(serverUrl + url))
-                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(request)))
-                .headers("Content-Type", "application/json")
-                .headers("Authorization", "Bearer "+AppStore.getJwt().getToken())
-                .build();
-        HttpClient client = HttpClient.newHttpClient();
+    public static List<MyTreeNode> requestTreeNodeList(String url, DataRequest request) {
+        HttpRequest httpRequest = buildJsonRequest(url, request);
         try {
-            HttpResponse<String>  response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            if(response.statusCode() == 200) {
-                List<Map<String,Object>> list = gson.fromJson(response.body(),List.class);
-                List<MyTreeNode> rList = new ArrayList<>();
-                for (Map<String, Object> stringObjectMap : list) {
-                    rList.add(new MyTreeNode(stringObjectMap));
+            HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                List<Map<String, Object>> list = gson.fromJson(response.body(), List.class);
+                List<MyTreeNode> result = new ArrayList<>();
+                for (Map<String, Object> item : list) {
+                    result.add(new MyTreeNode(item));
                 }
-                return rList;
+                return result;
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        return null;
+        return new ArrayList<>();
     }
 
-    /**
-     *  List<OptionItem> requestOptionItemList(String url, DataRequest request) 获取OptionItemList对象
-     * @param url  Web请求的Url 对用后的 RequestMapping
-     * @param request 请求参数对象
-     * @return List<OptionItem> 返回后台返回数据
-     */
-    public static List<OptionItem> requestOptionItemList(String url, DataRequest request){
-        HttpRequest httpRequest = HttpRequest.newBuilder()
-                .uri(URI.create(serverUrl + url))
-                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(request)))
-                .headers("Content-Type", "application/json")
-                .headers("Authorization", "Bearer "+AppStore.getJwt().getToken())
-                .build();
-        HttpClient client = HttpClient.newHttpClient();
+    public static List<OptionItem> requestOptionItemList(String url, DataRequest request) {
+        HttpRequest httpRequest = buildJsonRequest(url, request);
         try {
-            HttpResponse<String>  response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            if(response.statusCode() == 200) {
-                OptionItemList o = gson.fromJson(response.body(), OptionItemList.class);
-                return o.getItemList();
+            HttpResponse<String> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                OptionItemList optionItemList = gson.fromJson(response.body(), OptionItemList.class);
+                return optionItemList.getItemList();
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
-        return null;
+        return new ArrayList<>();
     }
 
-    /**
-     *   List<OptionItem> getDictionaryOptionItemList(String code) 获取数据字典OptionItemList对象
-     * @param code  数据字典类型吗
-     * @param
-     * @return List<OptionItem> 返回后台返回数据
-     */
-    public static  List<OptionItem> getDictionaryOptionItemList(String code) {
-        DataRequest req = new DataRequest();
-        req.add("code", code);
-        return requestOptionItemList("/api/base/getDictionaryOptionItemList",req);
+    public static List<OptionItem> getDictionaryOptionItemList(String code) {
+        DataRequest request = new DataRequest();
+        request.add("code", code);
+        return requestOptionItemList("/api/base/getDictionaryOptionItemList", request);
     }
 
-    /**
-     *  byte[] requestByteData(String url, DataRequest request) 获取byte[] 对象 下载数据文件等
-     * @param url  Web请求的Url 对用后的 RequestMapping
-     * @param request 请求参数对象
-     * @return List<OptionItem> 返回后台返回数据
-     */
-    public static byte[] requestByteData(String url, DataRequest request){
-        HttpRequest httpRequest = HttpRequest.newBuilder()
-                .uri(URI.create(serverUrl + url))
-                .POST(HttpRequest.BodyPublishers.ofString(gson.toJson(request)))
-                .headers("Content-Type", "application/json")
-                .headers("Authorization", "Bearer "+AppStore.getJwt().getToken())
-                .build();
-        HttpClient client = HttpClient.newHttpClient();
+    public static byte[] requestByteData(String url, DataRequest request) {
+        HttpRequest httpRequest = buildJsonRequest(url, request);
         try {
-            HttpResponse<byte[]>  response = client.send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());
-            if(response.statusCode() == 200) {
+            HttpResponse<byte[]> response = client.send(httpRequest, HttpResponse.BodyHandlers.ofByteArray());
+            if (response.statusCode() == 200) {
                 return response.body();
             }
         } catch (IOException | InterruptedException e) {
@@ -198,61 +254,50 @@ public class HttpRequestUtil {
         return null;
     }
 
-    /**
-     * DataResponse uploadFile(String fileName,String remoteFile) 上传数据文件
-     * @param fileName  本地文件名
-     * @param remoteFile 远程文件路径
-     * @return 上传操作信息
-     */
-    public static DataResponse uploadFile(String uri,String fileName,String remoteFile)  {
+    public static DataResponse uploadFile(String uri, String fileName, String remoteFile) {
         try {
             Path file = Path.of(fileName);
-            HttpClient client = HttpClient.newBuilder().build();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(serverUrl+uri+"?uploader=HttpTestApp&remoteFile="+remoteFile + "&fileName="
+            HttpRequest.Builder builder = HttpRequest.newBuilder()
+                    .uri(URI.create(serverUrl + uri + "?uploader=HttpTestApp&remoteFile=" + remoteFile + "&fileName="
                             + file.getFileName()))
-                    .POST(HttpRequest.BodyPublishers.ofFile(file))
-                    .headers("Authorization", "Bearer " + AppStore.getJwt().getToken())
-                    .build();
-            HttpResponse<String>  response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if(response.statusCode() == 200) {
+                    .POST(HttpRequest.BodyPublishers.ofFile(file));
+            String authorization = getAuthorizationHeader();
+            if (authorization != null) {
+                builder.header("Authorization", authorization);
+            }
+            HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
                 return gson.fromJson(response.body(), DataResponse.class);
             }
+            return buildErrorResponse("上传失败，状态码：" + response.statusCode());
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+            return buildErrorResponse("上传失败，无法连接后端服务：" + serverUrl);
         }
-        return null;
     }
 
-    /**
-     * DataResponse importData(String url, String fileName, String paras) 导入数据文件
-     * @param url  Web请求的Url 对用后的 RequestMapping
-     * @param fileName 本地文件名
-     * @param paras  上传参数
-     * @return 导入结果信息
-     */
-    public static DataResponse importData(String url, String fileName, String paras)  {
+    public static DataResponse importData(String url, String fileName, String paras) {
         try {
             Path file = Path.of(fileName);
-            String urlStr = serverUrl+url+"?uploader=HttpTestApp&fileName=" + file.getFileName() ;
-            if(paras != null && !paras.isEmpty())
-                urlStr += "&"+paras;
-            HttpClient client = HttpClient.newBuilder().build();
-            HttpRequest request = HttpRequest.newBuilder()
+            String urlStr = serverUrl + url + "?uploader=HttpTestApp&fileName=" + file.getFileName();
+            if (paras != null && !paras.isEmpty()) {
+                urlStr += "&" + paras;
+            }
+            HttpRequest.Builder builder = HttpRequest.newBuilder()
                     .uri(URI.create(urlStr))
-                    .POST(HttpRequest.BodyPublishers.ofFile(file))
-                    .headers("Authorization", "Bearer " + AppStore.getJwt().getToken())
-                    .build();
-            HttpResponse<String>  response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            if(response.statusCode() == 200) {
+                    .POST(HttpRequest.BodyPublishers.ofFile(file));
+            String authorization = getAuthorizationHeader();
+            if (authorization != null) {
+                builder.header("Authorization", authorization);
+            }
+            HttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
                 return gson.fromJson(response.body(), DataResponse.class);
             }
+            return buildErrorResponse("导入失败，状态码：" + response.statusCode());
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+            return buildErrorResponse("导入失败，无法连接后端服务：" + serverUrl);
         }
-        return null;
     }
-
-
-
 }

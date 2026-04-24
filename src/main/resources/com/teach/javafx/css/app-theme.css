@@ -1,0 +1,278 @@
+.root {
+    -fx-font-family: "Microsoft YaHei UI";
+    -fx-base: #f7f8fb;
+    -fx-background-color: #f7f8fb;
+    -oes-red: #8f1115;
+    -oes-red-dark: #63090d;
+    -oes-blue: #10233f;
+    -oes-blue-soft: #1c365e;
+    -oes-ink: #172033;
+    -oes-muted: #697386;
+    -oes-line: #dce2ec;
+}
+
+.login-shell {
+    -fx-background-color:
+        linear-gradient(to bottom right, rgba(143, 17, 21, 0.16), transparent 35%),
+        linear-gradient(to top left, rgba(16, 35, 63, 0.20), transparent 42%),
+        #f7f8fb;
+    -fx-padding: 28;
+}
+
+.login-frame {
+    -fx-background-color: white;
+    -fx-background-radius: 26;
+    -fx-border-radius: 26;
+    -fx-border-color: rgba(255, 255, 255, 0.82);
+    -fx-effect: dropshadow(gaussian, rgba(16, 35, 63, 0.22), 34, 0.16, 0, 16);
+}
+
+.login-hero {
+    -fx-pref-width: 460;
+    -fx-background-color:
+        linear-gradient(to bottom right, #8f1115, #6f0c12 42%, #10233f 100%);
+    -fx-background-radius: 26 0 0 26;
+}
+
+.brand-logo,
+.topbar-logo {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.22), 18, 0.18, 0, 6);
+}
+
+.hero-kicker {
+    -fx-text-fill: rgba(255, 255, 255, 0.80);
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 2px;
+}
+
+.hero-title {
+    -fx-text-fill: white;
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+}
+
+.hero-subtitle,
+.hero-copy,
+.hero-bullet,
+.hero-footnote {
+    -fx-text-fill: rgba(255, 255, 255, 0.84);
+}
+
+.hero-subtitle {
+    -fx-font-size: 13px;
+}
+
+.hero-copy {
+    -fx-font-size: 15px;
+    -fx-line-spacing: 5;
+}
+
+.hero-card {
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-border-color: rgba(255, 255, 255, 0.18);
+    -fx-padding: 16;
+}
+
+.hero-card-muted {
+    -fx-background-color: rgba(16, 35, 63, 0.28);
+}
+
+.hero-section-title {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.hero-bullet,
+.hero-footnote {
+    -fx-font-size: 13px;
+}
+
+.login-panel {
+    -fx-background-color: white;
+    -fx-background-radius: 0 26 26 0;
+}
+
+.panel-title {
+    -fx-text-fill: -oes-blue;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+.panel-subtitle {
+    -fx-text-fill: -oes-muted;
+    -fx-font-size: 13px;
+}
+
+.auth-tabs .tab-header-area .tab-header-background {
+    -fx-background-color: transparent;
+}
+
+.auth-tabs .tab {
+    -fx-background-color: #edf1f7;
+    -fx-background-radius: 14 14 0 0;
+    -fx-padding: 9 22;
+}
+
+.auth-tabs .tab:selected {
+    -fx-background-color: white;
+    -fx-border-color: -oes-red;
+    -fx-border-width: 0 0 3 0;
+}
+
+.auth-tabs .tab-label {
+    -fx-text-fill: -oes-blue;
+    -fx-font-weight: bold;
+}
+
+.auth-form {
+    -fx-background-color: white;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: -oes-line;
+    -fx-effect: dropshadow(gaussian, rgba(16, 35, 63, 0.08), 18, 0.10, 0, 8);
+}
+
+.field-label {
+    -fx-text-fill: #334158;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.text-field,
+.password-field,
+.combo-box {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #cfd7e5;
+    -fx-border-radius: 11;
+    -fx-background-radius: 11;
+    -fx-padding: 11 12;
+}
+
+.text-field:focused,
+.password-field:focused,
+.combo-box:focused {
+    -fx-border-color: -oes-red;
+    -fx-background-color: white;
+}
+
+.button {
+    -fx-cursor: hand;
+    -fx-background-radius: 12;
+    -fx-padding: 11 18;
+    -fx-font-weight: bold;
+}
+
+.primary-button {
+    -fx-background-color: linear-gradient(to right, #8f1115, #b4161d);
+    -fx-text-fill: white;
+}
+
+.secondary-button {
+    -fx-background-color: #edf2f8;
+    -fx-text-fill: -oes-blue;
+}
+
+.ghost-button {
+    -fx-background-color: rgba(255, 255, 255, 0.12);
+    -fx-text-fill: white;
+    -fx-border-color: rgba(255, 255, 255, 0.32);
+    -fx-border-radius: 12;
+}
+
+.app-shell {
+    -fx-background-color:
+        linear-gradient(to bottom right, #f8fafc, #eef2f7);
+}
+
+.app-topbar {
+    -fx-background-color: linear-gradient(to right, #10233f, #172f55 52%, #8f1115);
+}
+
+.app-title {
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.app-subtitle,
+.user-role {
+    -fx-text-fill: rgba(255, 255, 255, 0.76);
+    -fx-font-size: 12px;
+}
+
+.user-title {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.app-menu-bar {
+    -fx-background-color: white;
+    -fx-border-color: #d7dfeb;
+    -fx-border-width: 0 0 1 0;
+}
+
+.sidebar-panel {
+    -fx-background-color: white;
+    -fx-border-color: #d9e2ef;
+    -fx-border-width: 0 1 0 0;
+}
+
+.sidebar-title {
+    -fx-text-fill: -oes-blue;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.sidebar-caption {
+    -fx-text-fill: -oes-muted;
+    -fx-font-size: 12px;
+}
+
+.menu-tree {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.menu-tree .tree-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 9 10;
+    -fx-background-radius: 10;
+}
+
+.menu-tree .tree-cell:selected {
+    -fx-background-color: #f8e9eb;
+    -fx-text-fill: -oes-red;
+    -fx-font-weight: bold;
+}
+
+.content-shell {
+    -fx-padding: 20;
+}
+
+.content-tabs {
+    -fx-background-color: transparent;
+}
+
+.content-tabs .tab-content-area {
+    -fx-background-color: white;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: #dae3ef;
+    -fx-effect: dropshadow(gaussian, rgba(16, 35, 63, 0.08), 18, 0.10, 0, 8);
+}
+
+.content-tabs .tab {
+    -fx-background-color: #e9edf4;
+    -fx-background-radius: 12 12 0 0;
+}
+
+.content-tabs .tab:selected {
+    -fx-background-color: white;
+    -fx-border-color: -oes-red;
+    -fx-border-width: 0 0 3 0;
+}

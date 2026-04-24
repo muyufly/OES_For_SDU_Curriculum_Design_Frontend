@@ -29,4 +29,11 @@ public class AppStore {
     public static void setMainFrameController(MainFrameController mainFrameController) {
         AppStore.mainFrameController = mainFrameController;
     }
+
+    public static String getDisplayName() {
+        if (jwt == null) {
+            return "";
+        }
+        return jwt.getDisplayName();
+    }
 }
