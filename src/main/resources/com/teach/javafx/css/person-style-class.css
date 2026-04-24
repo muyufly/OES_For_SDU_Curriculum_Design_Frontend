@@ -1,4 +1,9 @@
 .border_black_1 {
+    -fx-border-color: #cfd7e5;
     -fx-border-width: 1;
-    -fx-border-color: black;-fx-padding: 0;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-background-color: #f8fafc;
+    -fx-padding: 0;
+    -fx-effect: dropshadow(gaussian, rgba(16, 35, 63, 0.05), 4, 0.1, 0, 2);
 }

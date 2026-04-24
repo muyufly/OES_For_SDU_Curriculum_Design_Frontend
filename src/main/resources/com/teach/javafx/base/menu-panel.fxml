@@ -12,10 +12,7 @@
            <children>
                <FlowPane nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" prefWidth="600.0" BorderPane.alignment="CENTER">
                    <children>
-                      <Button mnemonicParsing="false" onAction="#onAddRootButtonClick" text="添加一级菜单">
-                     <FlowPane.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </FlowPane.margin></Button>
+                      <Button mnemonicParsing="false" onAction="#onAddRootButtonClick" text="添加一级菜单" styleClass="primary-button">
                    </children>
                </FlowPane>
            </children>
@@ -98,7 +95,7 @@
                        </children>
                    </GridPane>
                    <FlowPane alignment="CENTER" columnHalignment="CENTER" prefHeight="36.0">
-                       <Button onAction="#onSubmitButtonClick" text="保存" />
+                       <Button onAction="#onSubmitButtonClick" text="保存" styleClass="primary-button" />
                    </FlowPane>
                </VBox>
            </items>

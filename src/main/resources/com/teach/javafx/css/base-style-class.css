@@ -1,28 +1,29 @@
 .border_black_1 {
-    -fx-border-color: black;
+    -fx-border-color: #cfd7e5;
     -fx-border-width: 1;
-    -fx-border-radius: 0;
-    -fx-border-insets: 0;
-    -fx-border-style: solid line-join bevel line-cap square;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-background-color: #f8fafc;
+    -fx-padding: 0;
+    -fx-effect: dropshadow(gaussian, rgba(16, 35, 63, 0.05), 4, 0.1, 0, 2);
 }
+
 .gridPane {
-    -fx-border-color: black;
-    -fx-border-width: 1;
-    -fx-border-radius: 0;
-    -fx-border-insets: 0;
-    -fx-border-style: solid line-join bevel line-cap square;
+    -fx-hgap: 12px;
+    -fx-vgap: 12px;
+    -fx-padding: 16px;
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-color: #d9e2ef;
+    -fx-effect: dropshadow(gaussian, rgba(16, 35, 63, 0.05), 8, 0.1, 0, 4);
 }
 
 .hbox {
-    -fx-border-color: blue;
-    -fx-border-width: 2px;
-    -fx-border-radius: 5px;
-    -fx-border-insets: 5px;
-    -fx-padding: 10px;
-    -fx-spacing: 5px;
-    -fx-background-color: lightgray;
-    -fx-background-insets: 5px;
-}
-.button {
-    -fx-text-fill: blue;
+    -fx-border-color: transparent;
+    -fx-padding: 12px;
+    -fx-spacing: 12px;
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(16, 35, 63, 0.05), 8, 0.1, 0, 4);
 }

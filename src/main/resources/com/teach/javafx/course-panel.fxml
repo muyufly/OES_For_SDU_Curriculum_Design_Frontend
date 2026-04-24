@@ -16,8 +16,8 @@
         <HBox spacing="8.0" style="-fx-padding: 12; -fx-background-color: #f4f7fb; -fx-border-color: #dbe3ef; -fx-border-width: 0 0 1 0;">
             <children>
                 <TextField fx:id="numNameTextField" promptText="按课程号或课程名查询" />
-                <Button onAction="#onQueryButtonClick" text="查询" />
-                <Button onAction="#onAddButtonClick" text="新增课程" />
+                <Button onAction="#onQueryButtonClick" text="查询" styleClass="primary-button" />
+                <Button onAction="#onAddButtonClick" text="新增课程" styleClass="primary-button" />
             </children>
         </HBox>
     </top>
