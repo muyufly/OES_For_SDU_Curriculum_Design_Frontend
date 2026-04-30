@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="760.0" prefWidth="1180.0" styleClass="page-root" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.teach.javafx.controller.AdminConsoleController">
+    <top>
+        <VBox spacing="10" styleClass="panel-header">
+            <padding>
+                <Insets bottom="14" left="18" right="18" top="18" />
+            </padding>
+            <HBox alignment="CENTER_LEFT" spacing="14">
+                <Label text="管理员控制台" styleClass="page-title" />
+                <Button text="刷新全部" onAction="#onRefresh" styleClass="primary-button" />
+            </HBox>
+            <Label fx:id="overviewLabel" text="正在加载系统总览..." styleClass="summary-text" wrapText="true" />
+        </VBox>
+    </top>
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE">
+            <Tab text="用户角色">
+                <BorderPane>
+                    <top>
+                        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="toolbar-row">
+                            <padding>
+                                <Insets bottom="10" left="12" right="12" top="12" />
+                            </padding>
+                            <TextField fx:id="userKeywordField" promptText="用户名/姓名/工号" prefWidth="220" />
+                            <ComboBox fx:id="roleFilterBox" prefWidth="150" />
+                            <Button text="查询" onAction="#onQueryUsers" />
+                            <Label text="修改为" />
+                            <ComboBox fx:id="roleEditBox" prefWidth="160" />
+                            <Button text="更新角色" onAction="#onUpdateUserRole" styleClass="primary-button" />
+                        </HBox>
+                    </top>
+                    <center>
+                        <TableView fx:id="userTable">
+                            <columns>
+                                <TableColumn fx:id="userNameColumn" text="账号" prefWidth="160" />
+                                <TableColumn fx:id="personNameColumn" text="姓名" prefWidth="160" />
+                                <TableColumn fx:id="roleColumn" text="角色" prefWidth="160" />
+                                <TableColumn fx:id="lastLoginColumn" text="最后登录" prefWidth="180" />
+                            </columns>
+                        </TableView>
+                    </center>
+                </BorderPane>
+            </Tab>
+            <Tab text="教师班级">
+                <BorderPane>
+                    <top>
+                        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="toolbar-row">
+                            <padding>
+                                <Insets bottom="10" left="12" right="12" top="12" />
+                            </padding>
+                            <TextField fx:id="teacherKeywordField" promptText="教师编号/姓名/学院" prefWidth="220" />
+                            <Button text="查询教师" onAction="#onQueryTeachers" />
+                            <Label text="绑定班级" />
+                            <ComboBox fx:id="classComboBox" prefWidth="220" />
+                            <Button text="绑定" onAction="#onAssignClass" styleClass="primary-button" />
+                            <Button text="删除绑定" onAction="#onDeleteBinding" />
+                        </HBox>
+                    </top>
+                    <center>
+                        <HBox spacing="12">
+                            <padding>
+                                <Insets bottom="12" left="12" right="12" top="0" />
+                            </padding>
+                            <TableView fx:id="teacherTable" prefWidth="520">
+                                <columns>
+                                    <TableColumn fx:id="teacherNumColumn" text="教师号" prefWidth="120" />
+                                    <TableColumn fx:id="teacherNameColumn" text="姓名" prefWidth="130" />
+                                    <TableColumn fx:id="teacherDeptColumn" text="学院" prefWidth="160" />
+                                    <TableColumn fx:id="teacherClassCountColumn" text="已绑定班级数" prefWidth="110" />
+                                </columns>
+                            </TableView>
+                            <TableView fx:id="bindingTable" prefWidth="560">
+                                <columns>
+                                    <TableColumn fx:id="bindingTeacherColumn" text="教师" prefWidth="160" />
+                                    <TableColumn fx:id="bindingClassColumn" text="班级" prefWidth="220" />
+                                    <TableColumn fx:id="bindingStudentCountColumn" text="学生数" prefWidth="100" />
+                                </columns>
+                            </TableView>
+                        </HBox>
+                    </center>
+                </BorderPane>
+            </Tab>
+            <Tab text="试卷监管">
+                <BorderPane>
+                    <top>
+                        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="toolbar-row">
+                            <padding>
+                                <Insets bottom="10" left="12" right="12" top="12" />
+                            </padding>
+                            <TextField fx:id="examKeywordField" promptText="试卷/课程/创建人" prefWidth="240" />
+                            <ComboBox fx:id="examStatusBox" prefWidth="130" />
+                            <Button text="查询" onAction="#onQueryExams" />
+                            <Label text="状态改为" />
+                            <ComboBox fx:id="examStatusEditBox" prefWidth="130" />
+                            <Button text="更新状态" onAction="#onUpdateExamStatus" styleClass="primary-button" />
+                        </HBox>
+                    </top>
+                    <center>
+                        <TableView fx:id="examTable">
+                            <columns>
+                                <TableColumn fx:id="examTitleColumn" text="试卷" prefWidth="300" />
+                                <TableColumn fx:id="examCourseColumn" text="课程" prefWidth="160" />
+                                <TableColumn fx:id="examStatusColumn" text="状态" prefWidth="90" />
+                                <TableColumn fx:id="examEndedColumn" text="已结束" prefWidth="90" />
+                                <TableColumn fx:id="examDraftColumn" text="草稿" prefWidth="90" />
+                                <TableColumn fx:id="examCreatorColumn" text="创建人" prefWidth="140" />
+                            </columns>
+                        </TableView>
+                    </center>
+                </BorderPane>
+            </Tab>
+            <Tab text="全局成绩">
+                <BorderPane>
+                    <top>
+                        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="toolbar-row">
+                            <padding>
+                                <Insets bottom="10" left="12" right="12" top="12" />
+                            </padding>
+                            <Button text="加载前200条成绩" onAction="#onLoadScores" styleClass="primary-button" />
+                            <Label text="用于管理员快速抽查全局成绩数据，不替代教师端精细批改。" />
+                        </HBox>
+                    </top>
+                    <center>
+                        <TableView fx:id="scoreTable">
+                            <columns>
+                                <TableColumn fx:id="scoreStudentColumn" text="学生" prefWidth="180" />
+                                <TableColumn fx:id="scoreClassColumn" text="班级" prefWidth="180" />
+                                <TableColumn fx:id="scoreCourseColumn" text="课程" prefWidth="220" />
+                                <TableColumn fx:id="scoreMarkColumn" text="成绩" prefWidth="120" />
+                            </columns>
+                        </TableView>
+                    </center>
+                </BorderPane>
+            </Tab>
+        </TabPane>
+    </center>
+</BorderPane>

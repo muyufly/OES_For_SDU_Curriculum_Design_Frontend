@@ -104,10 +104,21 @@ public class MainFrameController {
             return;
         }
         List<Map> menuList = (List<Map>) menuResponse.getData();
+        addAdminMenus(menuList);
         addExamMenus(menuList);
 
         initMenuTree(menuList);
         contentTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
+    }
+
+    private void addAdminMenus(List<Map> menuList) {
+        String role = AppStore.getJwt() == null ? "" : AppStore.getJwt().getRole();
+        if (!role.contains("ADMIN")) {
+            return;
+        }
+        Map root = menuRoot("管理员控制台");
+        addChild(root, "admin-console-panel", "系统监管");
+        mergeRoot(menuList, root);
     }
 
     private void addExamMenus(List<Map> menuList) {
