@@ -12,7 +12,7 @@
            <children>
                <FlowPane nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" prefWidth="600.0" BorderPane.alignment="CENTER">
                    <children>
-                      <Button mnemonicParsing="false" onAction="#onAddRootButtonClick" text="添加一级菜单" styleClass="primary-button">
+                      <Button mnemonicParsing="false" onAction="#onAddRootButtonClick" text="添加一级菜单" styleClass="primary-button" />
                    </children>
                </FlowPane>
            </children>
@@ -29,15 +29,15 @@
                    <padding>
                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                    </padding>
-                   <GridPane>
+                   <GridPane vgap="12.0">
                        <columnConstraints>
                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="392.5" minWidth="10.0" prefWidth="84.0" />
                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="729.5" minWidth="10.0" prefWidth="725.0" />
                        </columnConstraints>
                        <rowConstraints>
-                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
+                           <RowConstraints minHeight="10.0" prefHeight="45.0" vgrow="SOMETIMES" />
                        </rowConstraints>
                        <children>
                            <Label text="父节点" GridPane.columnIndex="0" GridPane.rowIndex="0">
