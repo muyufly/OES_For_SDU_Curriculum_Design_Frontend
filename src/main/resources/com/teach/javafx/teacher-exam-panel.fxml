@@ -29,7 +29,7 @@
     <center>
         <SplitPane dividerPositions="0.34">
             <items>
-                <VBox spacing="8.0">
+                <VBox spacing="8.0" styleClass="form-card">
                     <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
                     <children>
                         <Label text="我的试卷" styleClass="sidebar-title" />
@@ -43,7 +43,7 @@
                         </TableView>
                     </children>
                 </VBox>
-                <VBox spacing="10.0">
+                <VBox spacing="10.0" styleClass="form-card">
                     <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
                     <children>
                         <GridPane hgap="8" vgap="8">

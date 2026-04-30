@@ -25,6 +25,12 @@ import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
+import javafx.animation.TranslateTransition;
+import javafx.util.Duration;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -59,6 +65,12 @@ public class StudentLeaveController extends ToolController {
     private TableColumn<Map, String> teacherCommentColumn; //学生信息表 班级列
     @FXML
     private TableColumn<Map, String> adminCommentColumn; //学生信息表 证件号码列
+
+    @FXML
+    private VBox formDrawer;
+    @FXML
+    private Pane drawerBackdrop;
+    private boolean isDrawerOpen = false;
 
     @FXML
     private TextField studentNumField; //学生信息  学号输入域
@@ -216,6 +228,7 @@ public class StudentLeaveController extends ToolController {
         reasonField.setText(CommonMethod.getString(form, "reason"));
         teacherCommentField.setText(CommonMethod.getString(form, "teacherComment"));
         adminCommentField.setText(CommonMethod.getString(form, "adminComment"));
+        showDrawer();
     }
 
 
@@ -245,6 +258,7 @@ public class StudentLeaveController extends ToolController {
     @FXML
     protected void onAddButtonClick() {
         clearPanel();
+        showDrawer();
     }
 
     @FXML
@@ -279,6 +293,7 @@ public class StudentLeaveController extends ToolController {
         if (res.getCode() == 0) {
             MessageDialog.showDialog("保存提交成功！");
             onQueryButtonClick();
+            hideDrawer();
         } else {
             MessageDialog.showDialog(res.getMsg());
         }
@@ -294,8 +309,44 @@ public class StudentLeaveController extends ToolController {
         if (res.getCode() == 0) {
             MessageDialog.showDialog("审核成功！");
             onQueryButtonClick();
+            hideDrawer();
         } else {
             MessageDialog.showDialog(res.getMsg());
         }
+    }
+
+    private void showDrawer() {
+        if (isDrawerOpen) return;
+        drawerBackdrop.setVisible(true);
+        drawerBackdrop.setOpacity(0);
+        FadeTransition ft = new FadeTransition(Duration.millis(300), drawerBackdrop);
+        ft.setToValue(1.0);
+        TranslateTransition tt = new TranslateTransition(Duration.millis(300), formDrawer);
+        tt.setToX(0);
+        ParallelTransition pt = new ParallelTransition(ft, tt);
+        pt.play();
+        isDrawerOpen = true;
+    }
+
+    private void hideDrawer() {
+        if (!isDrawerOpen) return;
+        FadeTransition ft = new FadeTransition(Duration.millis(300), drawerBackdrop);
+        ft.setToValue(0.0);
+        TranslateTransition tt = new TranslateTransition(Duration.millis(300), formDrawer);
+        tt.setToX(formDrawer.getWidth() > 0 ? formDrawer.getWidth() : 450);
+        ParallelTransition pt = new ParallelTransition(ft, tt);
+        pt.setOnFinished(e -> drawerBackdrop.setVisible(false));
+        pt.play();
+        isDrawerOpen = false;
+    }
+
+    @FXML
+    public void onCloseDrawerClick() {
+        hideDrawer();
+    }
+
+    @FXML
+    public void onBackdropClick() {
+        hideDrawer();
     }
 }

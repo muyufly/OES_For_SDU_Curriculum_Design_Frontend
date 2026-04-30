@@ -146,7 +146,8 @@ public class ScoreTableController {
         Scene scene = null;
         try {
             fxmlLoader = new FXMLLoader(MainApplication.class.getResource("score-edit-dialog.fxml"));
-            scene = new Scene(fxmlLoader.load(), 260, 140);
+            scene = new Scene(fxmlLoader.load(), 320, 260);
+            scene.getStylesheets().add(MainApplication.class.getResource("css/app-theme.css").toExternalForm());
             stage = new Stage();
             stage.initOwner(MainApplication.getMainStage());
             stage.initModality(Modality.NONE);

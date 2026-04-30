@@ -33,7 +33,8 @@ public class MessageDialog {
         Stage stage;
         try {
             fxmlLoader = new FXMLLoader(MainApplication.class.getResource("base/message-dialog.fxml"));
-            scene = new Scene(fxmlLoader.load(), 300, 260);
+            scene = new Scene(fxmlLoader.load(), 320, 220);
+            scene.getStylesheets().add(MainApplication.class.getResource("css/app-theme.css").toExternalForm());
             stage = new Stage();
             stage.initOwner(MainApplication.getMainStage());
             stage.setAlwaysOnTop(true);
@@ -47,7 +48,8 @@ public class MessageDialog {
             messageController.setStage(stage);
 
             fxmlLoader = new FXMLLoader(MainApplication.class.getResource("base/choice-dialog.fxml"));
-            scene = new Scene(fxmlLoader.load(), 300, 260);
+            scene = new Scene(fxmlLoader.load(), 320, 220);
+            scene.getStylesheets().add(MainApplication.class.getResource("css/app-theme.css").toExternalForm());
             stage = new Stage();
             stage.initOwner(MainApplication.getMainStage());
             stage.setAlwaysOnTop(true);

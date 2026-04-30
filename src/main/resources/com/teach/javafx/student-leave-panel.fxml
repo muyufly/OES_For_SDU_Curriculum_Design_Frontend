@@ -4,7 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -60,8 +60,8 @@
        </HBox>
    </top>
    <center>
-      <SplitPane dividerPositions="0.7,0.3">
-        <items>
+      <StackPane>
+         <children>
             <TableView fx:id="dataTableView" >
                 <columns>
                     <TableColumn fx:id="studentNumColumn" prefWidth="100.0" text="学号" />
@@ -74,10 +74,15 @@
                     <TableColumn fx:id="adminCommentColumn" prefWidth="125.0" text="管理员审核意见" />
                 </columns>
             </TableView>
-            <VBox alignment="TOP_CENTER" spacing="20.0" styleClass="form-card">
+            <Pane fx:id="drawerBackdrop" style="-fx-background-color: rgba(0,0,0,0.3);" visible="false" onMouseClicked="#onBackdropClick"/>
+            <VBox fx:id="formDrawer" alignment="TOP_CENTER" spacing="20.0" styleClass="form-card" StackPane.alignment="CENTER_RIGHT" maxWidth="450" translateX="450" style="-fx-background-radius: 18 0 0 18; -fx-border-radius: 18 0 0 18;">
                 <padding>
                     <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                 </padding>
+                <HBox alignment="CENTER_RIGHT" spacing="10">
+                    <Label text="请假申请审批" style="-fx-font-size: 16px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" maxWidth="Infinity" />
+                    <Button text="关闭" onAction="#onCloseDrawerClick" styleClass="ghost-button" style="-fx-text-fill: -oes-blue; -fx-border-color: #cfd7e5;" />
+                </HBox>
                 <GridPane hgap="10.0" vgap="12.0">
                     <columnConstraints>
                         <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="124.0" minWidth="10.0" prefWidth="67.0" />
@@ -130,7 +135,7 @@
                    </Button>
                </FlowPane>
             </VBox>
-        </items>
-      </SplitPane>
+         </children>
+      </StackPane>
    </center>
 </BorderPane>
