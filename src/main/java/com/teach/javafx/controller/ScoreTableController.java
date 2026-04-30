@@ -39,8 +39,6 @@ public class ScoreTableController {
     private TableColumn<Map,String> creditColumn;
     @FXML
     private TableColumn<Map,String> markColumn;
-    @FXML
-    private TableColumn<Map, Button> editColumn;
 
 
     private ArrayList<Map> scoreList = new ArrayList();  // 学生信息列表数据
@@ -91,30 +89,19 @@ public class ScoreTableController {
 
     private void setTableViewData() {
         observableList.clear();
-        Map map;
-        Button editButton;
         for (int j = 0; j < scoreList.size(); j++) {
-            map = scoreList.get(j);
-            editButton = new Button("编辑");
-            editButton.setId("edit"+j);
-            editButton.setOnAction(e->{
-                editItem(((Button)e.getSource()).getId());
-            });
-            map.put("edit",editButton);
-            observableList.addAll(FXCollections.observableArrayList(map));
+            observableList.addAll(FXCollections.observableArrayList(scoreList.get(j)));
         }
         dataTableView.setItems(observableList);
     }
-    public void editItem(String name){
-        if(name == null)
+    
+    public void editItem(Map data){
+        if(data == null)
             return;
-        int j = Integer.parseInt(name.substring(4,name.length()));
-        Map data = scoreList.get(j);
         initDialog();
         scoreEditController.showDialog(data);
         MainApplication.setCanClose(false);
         stage.showAndWait();
-
     }
     @FXML
     public void initialize() {
@@ -127,7 +114,6 @@ public class ScoreTableController {
         courseNameColumn.setCellValueFactory(new MapValueFactory<>("courseName"));
         creditColumn.setCellValueFactory(new MapValueFactory<>("credit"));
         markColumn.setCellValueFactory(new MapValueFactory<>("mark"));
-        editColumn.setCellValueFactory(new MapValueFactory<>("edit"));
 
         DataRequest req =new DataRequest();
         studentList = HttpRequestUtil.requestOptionItemList("/api/score/getStudentItemOptionList",req); //从后台获取所有学生信息列表集合
@@ -138,6 +124,18 @@ public class ScoreTableController {
         courseComboBox.getItems().addAll(item);
         courseComboBox.getItems().addAll(courseList);
         dataTableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        
+        dataTableView.setRowFactory(tv -> {
+            TableRow<Map> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    Map rowData = row.getItem();
+                    editItem(rowData);
+                }
+            });
+            return row;
+        });
+
         onQueryButtonClick();
     }
 
@@ -196,19 +194,6 @@ public class ScoreTableController {
     private void onAddButtonClick() {
         initDialog();
         scoreEditController.showDialog(null);
-        MainApplication.setCanClose(false);
-        stage.showAndWait();
-    }
-    @FXML
-    private void onEditButtonClick() {
-//        dataTableView.getSelectionModel().getSelectedItems();
-        Map data = dataTableView.getSelectionModel().getSelectedItem();
-        if(data == null) {
-            MessageDialog.showDialog("没有选中，不能修改！");
-            return;
-        }
-        initDialog();
-        scoreEditController.showDialog(data);
         MainApplication.setCanClose(false);
         stage.showAndWait();
     }
