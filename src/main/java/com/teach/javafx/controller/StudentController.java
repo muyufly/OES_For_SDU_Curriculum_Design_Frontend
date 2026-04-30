@@ -10,6 +10,12 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
+import javafx.animation.TranslateTransition;
+import javafx.util.Duration;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import com.teach.javafx.request.DataRequest;
@@ -66,6 +72,12 @@ public class StudentController extends ToolController {
     private TableColumn<Map, String> addressColumn;//学生信息表 地址列
     @FXML
     private Button photoButton;  //照片显示和上传按钮
+
+    @FXML
+    private VBox formDrawer;     // 编辑抽屉
+    @FXML
+    private Pane drawerBackdrop; // 遮罩层
+    private boolean isDrawerOpen = false; // 抽屉状态
 
     @FXML
     private TextField numField; //学生信息  学号输入域
@@ -194,6 +206,7 @@ public class StudentController extends ToolController {
         phoneField.setText(CommonMethod.getString(form, "phone"));
         addressField.setText(CommonMethod.getString(form, "address"));
         displayPhoto();
+        showDrawer();
     }
 
     /**
@@ -226,6 +239,7 @@ public class StudentController extends ToolController {
     @FXML
     protected void onAddButtonClick() {
         clearPanel();
+        showDrawer();
     }
 
     /**
@@ -286,6 +300,7 @@ public class StudentController extends ToolController {
             personId = CommonMethod.getIntegerFromObject(res.getData());
             MessageDialog.showDialog("提交成功！");
             onQueryButtonClick();
+            hideDrawer();
         } else {
             MessageDialog.showDialog(res.getMsg());
         }
@@ -342,6 +357,7 @@ public class StudentController extends ToolController {
         fileDialog.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("XLSX 文件", "*.xlsx"));
         File file = fileDialog.showOpenDialog(null);
+        if (file == null) return;
         String paras = "";
         DataResponse res = HttpRequestUtil.importData("/api/term/importStudentData", file.getPath(), paras);
         if (res.getCode() == 0) {
@@ -465,6 +481,47 @@ public class StudentController extends ToolController {
         else {
             MessageDialog.showDialog(res.getMsg());
         }
+    }
+
+    private void showDrawer() {
+        if (isDrawerOpen) return;
+        drawerBackdrop.setVisible(true);
+        drawerBackdrop.setOpacity(0);
+        
+        FadeTransition ft = new FadeTransition(Duration.millis(300), drawerBackdrop);
+        ft.setToValue(1.0);
+        
+        TranslateTransition tt = new TranslateTransition(Duration.millis(300), formDrawer);
+        tt.setToX(0);
+        
+        ParallelTransition pt = new ParallelTransition(ft, tt);
+        pt.play();
+        isDrawerOpen = true;
+    }
+
+    private void hideDrawer() {
+        if (!isDrawerOpen) return;
+        
+        FadeTransition ft = new FadeTransition(Duration.millis(300), drawerBackdrop);
+        ft.setToValue(0.0);
+        
+        TranslateTransition tt = new TranslateTransition(Duration.millis(300), formDrawer);
+        tt.setToX(formDrawer.getWidth() > 0 ? formDrawer.getWidth() : 450);
+        
+        ParallelTransition pt = new ParallelTransition(ft, tt);
+        pt.setOnFinished(e -> drawerBackdrop.setVisible(false));
+        pt.play();
+        isDrawerOpen = false;
+    }
+
+    @FXML
+    public void onCloseDrawerClick() {
+        hideDrawer();
+    }
+
+    @FXML
+    public void onBackdropClick() {
+        hideDrawer();
     }
 
 }
