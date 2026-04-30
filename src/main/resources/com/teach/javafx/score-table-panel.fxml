@@ -12,7 +12,7 @@
 <?import javafx.scene.control.ComboBox?>
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.teach.javafx.controller.ScoreTableController">
    <top>
-       <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" >
+       <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" styleClass="panel-toolbar">
            <children>
                <FlowPane alignment="TOP_LEFT" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                    <children>

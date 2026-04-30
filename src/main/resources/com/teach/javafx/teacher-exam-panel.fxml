@@ -7,7 +7,7 @@
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.teach.javafx.controller.TeacherExamController">
     <top>
-        <VBox spacing="10.0" styleClass="auth-form">
+        <VBox spacing="10.0" styleClass="panel-toolbar">
             <padding><Insets bottom="12" left="12" right="12" top="12" /></padding>
             <children>
                 <Label text="试卷上传：JSON/CSV/Markdown；CSV 元信息由下方字段提供" styleClass="field-label" />

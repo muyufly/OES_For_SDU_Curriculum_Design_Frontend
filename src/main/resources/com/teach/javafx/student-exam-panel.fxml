@@ -5,7 +5,7 @@
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.teach.javafx.controller.StudentExamController">
     <top>
-        <HBox spacing="10" alignment="CENTER_LEFT">
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="panel-toolbar">
             <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
             <children>
                 <Button text="刷新试卷" onAction="#doRefresh" styleClass="secondary-button" />

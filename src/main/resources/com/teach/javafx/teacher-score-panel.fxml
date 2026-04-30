@@ -5,7 +5,7 @@
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.teach.javafx.controller.TeacherScoreController">
     <top>
-        <HBox spacing="10" alignment="CENTER_LEFT">
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="panel-toolbar">
             <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
             <children>
                 <ComboBox fx:id="examComboBox" prefWidth="300" promptText="选择试卷或查看课程成绩" />

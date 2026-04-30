@@ -13,7 +13,7 @@
             fx:controller="com.teach.javafx.controller.CourseController"
             style="-fx-background-color: linear-gradient(to bottom, #fdfefe, #f6f9fd);">
     <top>
-        <HBox spacing="8.0" style="-fx-padding: 12; -fx-background-color: #f4f7fb; -fx-border-color: #dbe3ef; -fx-border-width: 0 0 1 0;">
+        <HBox styleClass="panel-toolbar">
             <children>
                 <TextField fx:id="numNameTextField" promptText="按课程号或课程名查询" />
                 <Button onAction="#onQueryButtonClick" text="查询" styleClass="primary-button" />
