@@ -210,11 +210,6 @@
     -fx-font-weight: bold;
 }
 
-.app-menu-bar {
-    -fx-background-color: white;
-    -fx-border-color: #d7dfeb;
-    -fx-border-width: 0 0 1 0;
-}
 
 .sidebar-panel {
     -fx-background-color: white;

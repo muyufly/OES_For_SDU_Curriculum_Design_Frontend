@@ -6,13 +6,15 @@ import com.teach.javafx.request.DataRequest;
 import com.teach.javafx.request.DataResponse;
 import com.teach.javafx.request.HttpRequestUtil;
 import com.teach.javafx.request.MyTreeNode;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.input.MouseEvent;
 
 import java.io.IOException;
@@ -20,58 +22,22 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 public class MainFrameController {
-    class ChangePanelHandler implements EventHandler<ActionEvent> {
-        @Override
-        public void handle(ActionEvent actionEvent) {
-            changeContent(actionEvent);
-        }
-    }
+
 
     private final Map<String, Tab> tabMap = new HashMap<>();
     private final Map<String, Scene> sceneMap = new HashMap<>();
     private final Map<String, ToolController> controlMap = new HashMap<>();
 
-    @FXML private MenuBar menuBar;
+
     @FXML private TreeView<MyTreeNode> menuTree;
     @FXML protected TabPane contentTabPane;
     @FXML private Label systemPrompt;
     @FXML private Label welcomeLabel;
     @FXML private Label roleLabel;
 
-    private ChangePanelHandler handler = null;
 
-    void addMenuItems(Menu parent, List<Map> menuList) {
-        for (Map menuData : menuList) {
-            List<Map> childList = (List<Map>) menuData.get("sList");
-            String name = (String) menuData.get("name");
-            String title = (String) menuData.get("title");
-            if (childList == null || childList.isEmpty()) {
-                MenuItem item = new MenuItem();
-                item.setId(name);
-                item.setText(title);
-                item.setOnAction(this::changeContent);
-                parent.getItems().add(item);
-            } else {
-                Menu menu = new Menu();
-                menu.setText(title);
-                addMenuItems(menu, childList);
-                parent.getItems().add(menu);
-            }
-        }
-    }
 
-    public void initMenuBar(List<Map> menuList) {
-        menuBar.getMenus().clear();
-        for (Map menuData : menuList) {
-            List<Map> childList = (List<Map>) menuData.get("sList");
-            Menu menu = new Menu();
-            menu.setText((String) menuData.get("title"));
-            if (childList != null && !childList.isEmpty()) {
-                addMenuItems(menu, childList);
-            }
-            menuBar.getMenus().add(menu);
-        }
-    }
+
 
     void addMenuItems(TreeItem<MyTreeNode> parent, List<Map> menuList) {
         for (Map menuData : menuList) {
@@ -124,7 +90,6 @@ public class MainFrameController {
 
     @FXML
     public void initialize() {
-        handler = new ChangePanelHandler();
         welcomeLabel.setText("你好，" + AppStore.getDisplayName());
         roleLabel.setText(AppStore.getJwt() == null ? "" : AppStore.getJwt().getRole());
 
@@ -140,7 +105,7 @@ public class MainFrameController {
         }
         List<Map> menuList = (List<Map>) menuResponse.getData();
         addExamMenus(menuList);
-        initMenuBar(menuList);
+
         initMenuTree(menuList);
         contentTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
     }
@@ -201,9 +166,6 @@ public class MainFrameController {
         menuList.add(root);
     }
 
-    protected void onLogoutMenuClick(ActionEvent event) {
-        logout();
-    }
 
     @FXML
     protected void onLogoutButtonClick() {
@@ -221,12 +183,7 @@ public class MainFrameController {
         }
     }
 
-    public void changeContent(ActionEvent ae) {
-        Object obj = ae.getSource();
-        if (obj instanceof MenuItem item) {
-            changeContent(item.getId(), item.getText());
-        }
-    }
+
 
     public void changeContent(String name, String title) {
         if (name == null || name.isEmpty()) {

@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.image.Image?>
@@ -46,7 +45,6 @@
                         <Insets bottom="16.0" left="24.0" right="24.0" top="16.0" />
                     </padding>
                 </HBox>
-                <MenuBar fx:id="menuBar" styleClass="app-menu-bar" />
             </children>
         </VBox>
     </top>
