@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.teach.javafx.controller.TeacherStatsController">
+    <top>
+        <VBox spacing="10" styleClass="panel-toolbar">
+            <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+            <children>
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <children>
+                        <Label text="选择试卷" />
+                        <ComboBox fx:id="examComboBox" prefWidth="360" />
+                        <Button text="刷新统计" onAction="#loadStats" styleClass="primary-button" />
+                    </children>
+                </HBox>
+                <Label fx:id="summaryLabel" text="请选择试卷查看统计" styleClass="sidebar-title" />
+            </children>
+        </VBox>
+    </top>
+    <center>
+        <TableView fx:id="statsTable">
+            <columns>
+                <TableColumn fx:id="studentColumn" text="学生" prefWidth="140" />
+                <TableColumn fx:id="classColumn" text="班级" prefWidth="160" />
+                <TableColumn fx:id="statusColumn" text="状态" prefWidth="100" />
+                <TableColumn fx:id="scoreColumn" text="总分" prefWidth="90" />
+                <TableColumn fx:id="gradedColumn" text="已批完" prefWidth="100" />
+            </columns>
+        </TableView>
+    </center>
+</BorderPane>

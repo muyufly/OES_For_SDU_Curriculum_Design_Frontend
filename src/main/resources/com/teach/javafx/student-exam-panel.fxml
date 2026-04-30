@@ -9,40 +9,19 @@
             <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
             <children>
                 <Button text="刷新试卷" onAction="#doRefresh" styleClass="secondary-button" />
-                <Button text="获取选中试卷" onAction="#onLoadQuestions" styleClass="primary-button" />
-                <Button text="提交答卷" onAction="#onSubmitExam" styleClass="primary-button" />
+                <Button text="进入考试界面" onAction="#onEnterExam" styleClass="primary-button" />
             </children>
         </HBox>
     </top>
     <center>
-        <SplitPane dividerPositions="0.35,0.62">
-            <items>
-                <TableView fx:id="examTable">
-                    <columns>
-                        <TableColumn fx:id="examTitleColumn" text="试卷" prefWidth="210" />
-                        <TableColumn fx:id="courseColumn" text="课程" prefWidth="120" />
-                        <TableColumn fx:id="endTimeColumn" text="截止时间" prefWidth="160" />
-                        <TableColumn fx:id="submittedColumn" text="已提交" prefWidth="80" />
-                    </columns>
-                </TableView>
-                <TableView fx:id="questionTable">
-                    <columns>
-                        <TableColumn fx:id="questionTypeColumn" text="题型" prefWidth="80" />
-                        <TableColumn fx:id="questionContentColumn" text="题干" prefWidth="280" />
-                        <TableColumn fx:id="questionScoreColumn" text="分值" prefWidth="70" />
-                    </columns>
-                </TableView>
-                <VBox spacing="10">
-                    <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
-                    <children>
-                        <Label text="题目内容" styleClass="field-label" />
-                        <TextArea fx:id="questionArea" editable="false" prefRowCount="8" VBox.vgrow="ALWAYS" />
-                        <Label text="我的答案（选择题填写 A/B/C/D）" styleClass="field-label" />
-                        <TextArea fx:id="answerArea" prefRowCount="5" VBox.vgrow="ALWAYS" />
-                        <Button text="暂存当前题答案" onAction="#onSaveAnswer" styleClass="secondary-button" />
-                    </children>
-                </VBox>
-            </items>
-        </SplitPane>
+        <TableView fx:id="examTable">
+            <columns>
+                <TableColumn fx:id="examTitleColumn" text="试卷" prefWidth="260" />
+                <TableColumn fx:id="courseColumn" text="课程" prefWidth="140" />
+                <TableColumn fx:id="endTimeColumn" text="截止时间" prefWidth="180" />
+                <TableColumn fx:id="statusColumn" text="状态" prefWidth="110" />
+                <TableColumn fx:id="remainingColumn" text="剩余秒数" prefWidth="120" />
+            </columns>
+        </TableView>
     </center>
 </BorderPane>

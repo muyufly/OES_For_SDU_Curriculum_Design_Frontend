@@ -116,6 +116,7 @@ public class MainFrameController {
             Map root = menuRoot("考试管理");
             addChild(root, "teacher-exam-panel", "试卷管理");
             addChild(root, "teacher-grade-panel", "试卷批改");
+            addChild(root, "teacher-stat-panel", "考试统计");
             addChild(root, "teacher-score-panel", "学生成绩管理");
             mergeRoot(menuList, root);
         }

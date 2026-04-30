@@ -9,20 +9,27 @@
             <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
             <children>
                 <Label text="选择试卷" />
-                <ComboBox fx:id="examComboBox" prefWidth="320" />
-                <Button text="刷新记录" onAction="#loadRecords" styleClass="secondary-button" />
+                <ComboBox fx:id="examComboBox" prefWidth="340" />
+                <Button text="刷新已结束试卷" onAction="#loadAttempts" styleClass="secondary-button" />
             </children>
         </HBox>
     </top>
     <center>
-        <SplitPane dividerPositions="0.48">
+        <SplitPane dividerPositions="0.27,0.58">
             <items>
+                <TableView fx:id="attemptTable">
+                    <columns>
+                        <TableColumn fx:id="studentColumn" text="学生" prefWidth="110" />
+                        <TableColumn fx:id="classColumn" text="班级" prefWidth="120" />
+                        <TableColumn fx:id="totalColumn" text="总分" prefWidth="70" />
+                        <TableColumn fx:id="allGradedColumn" text="已批完" prefWidth="80" />
+                    </columns>
+                </TableView>
                 <TableView fx:id="recordTable">
                     <columns>
-                        <TableColumn fx:id="studentColumn" text="学生" prefWidth="120" />
+                        <TableColumn fx:id="questionColumn" text="题目" prefWidth="300" />
                         <TableColumn fx:id="typeColumn" text="题型" prefWidth="80" />
                         <TableColumn fx:id="scoreColumn" text="得分" prefWidth="80" />
-                        <TableColumn fx:id="gradedColumn" text="已批改" prefWidth="90" />
                     </columns>
                 </TableView>
                 <VBox spacing="10">

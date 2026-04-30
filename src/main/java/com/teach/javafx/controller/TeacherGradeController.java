@@ -16,26 +16,37 @@ import java.util.Map;
 
 public class TeacherGradeController extends ToolController {
     @FXML private ComboBox<Map> examComboBox;
-    @FXML private TableView<Map> recordTable;
+    @FXML private TableView<Map> attemptTable;
     @FXML private TableColumn<Map, String> studentColumn;
+    @FXML private TableColumn<Map, String> classColumn;
+    @FXML private TableColumn<Map, String> totalColumn;
+    @FXML private TableColumn<Map, String> allGradedColumn;
+    @FXML private TableView<Map> recordTable;
+    @FXML private TableColumn<Map, String> questionColumn;
     @FXML private TableColumn<Map, String> typeColumn;
     @FXML private TableColumn<Map, String> scoreColumn;
-    @FXML private TableColumn<Map, String> gradedColumn;
     @FXML private TextArea questionArea;
     @FXML private TextArea answerArea;
     @FXML private TextField scoreField;
+
+    private final ObservableList<Map> attempts = FXCollections.observableArrayList();
     private final ObservableList<Map> records = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
         studentColumn.setCellValueFactory(new MapValueFactory<>("studentName"));
+        classColumn.setCellValueFactory(new MapValueFactory<>("className"));
+        totalColumn.setCellValueFactory(new MapValueFactory<>("totalScore"));
+        allGradedColumn.setCellValueFactory(new MapValueFactory<>("allGraded"));
+        questionColumn.setCellValueFactory(new MapValueFactory<>("questionContent"));
         typeColumn.setCellValueFactory(new MapValueFactory<>("questionType"));
         scoreColumn.setCellValueFactory(new MapValueFactory<>("score"));
-        gradedColumn.setCellValueFactory(new MapValueFactory<>("graded"));
+        attemptTable.setItems(attempts);
         recordTable.setItems(records);
         examComboBox.setCellFactory(list -> examCell());
         examComboBox.setButtonCell(examCell());
-        examComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> loadRecords());
+        examComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> loadAttempts());
+        attemptTable.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, row) -> loadRecords(row));
         recordTable.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, row) -> showRecord(row));
         doRefresh();
     }
@@ -52,15 +63,27 @@ public class TeacherGradeController extends ToolController {
     }
 
     @FXML
-    private void loadRecords() {
+    private void loadAttempts() {
         Map exam = examComboBox.getSelectionModel().getSelectedItem();
         Integer examId = intValue(exam, "examId");
         if (examId == null) return;
-        DataResponse response = HttpRequestUtil.get("/api/teacher/exams/" + examId + "/records");
+        DataResponse response = HttpRequestUtil.get("/api/teacher/exams/" + examId + "/ended-attempts");
+        if (response != null && response.getCode() == 0) {
+            attempts.setAll((List<Map>) response.getData());
+            records.clear();
+        } else {
+            MessageDialog.showDialog(response == null ? "加载已结束试卷失败" : response.getMsg());
+        }
+    }
+
+    private void loadRecords(Map attempt) {
+        Integer attemptId = intValue(attempt, "attemptId");
+        if (attemptId == null) return;
+        DataResponse response = HttpRequestUtil.get("/api/teacher/attempts/" + attemptId + "/records");
         if (response != null && response.getCode() == 0) {
             records.setAll((List<Map>) response.getData());
         } else {
-            MessageDialog.showDialog(response == null ? "加载批改记录失败" : response.getMsg());
+            MessageDialog.showDialog(response == null ? "加载答题记录失败" : response.getMsg());
         }
     }
 
@@ -77,7 +100,8 @@ public class TeacherGradeController extends ToolController {
         DataResponse response = HttpRequestUtil.request("/api/teacher/records/" + recordId + "/grade", request);
         if (response != null && response.getCode() == 0) {
             MessageDialog.showDialog("批改完成");
-            loadRecords();
+            loadRecords(attemptTable.getSelectionModel().getSelectedItem());
+            loadAttempts();
         } else {
             MessageDialog.showDialog(response == null ? "批改失败" : response.getMsg());
         }
@@ -87,6 +111,8 @@ public class TeacherGradeController extends ToolController {
         questionArea.setText(text(row, "questionContent"));
         answerArea.setText(text(row, "answer"));
         scoreField.setText(text(row, "score"));
+        boolean read = "READ".equals(text(row, "questionType"));
+        scoreField.setEditable(read);
     }
 
     private ListCell<Map> examCell() {

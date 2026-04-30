@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.teach.javafx.controller.StudentExamWindowController"
+            styleClass="app-shell">
+    <top>
+        <HBox spacing="16" alignment="CENTER_LEFT" styleClass="app-topbar">
+            <padding><Insets bottom="14" left="18" right="18" top="14" /></padding>
+            <children>
+                <VBox spacing="4">
+                    <children>
+                        <Label fx:id="titleLabel" text="考试" styleClass="app-title" />
+                        <Label fx:id="statusLabel" text="草稿" styleClass="app-subtitle" />
+                    </children>
+                </VBox>
+                <Pane HBox.hgrow="ALWAYS" />
+                <Label fx:id="timerLabel" text="剩余时间：--:--:--" styleClass="user-title" />
+                <Label fx:id="lastSaveLabel" text="尚未保存" styleClass="user-role" />
+                <Button fx:id="saveButton" text="手动保存" onAction="#onManualSave" styleClass="ghost-button" />
+                <Button fx:id="submitButton" text="提交试卷" onAction="#onSubmit" styleClass="primary-button" />
+            </children>
+        </HBox>
+    </top>
+    <center>
+        <SplitPane dividerPositions="0.22,0.64">
+            <items>
+                <TableView fx:id="questionTable">
+                    <columns>
+                        <TableColumn fx:id="sortColumn" text="题号" prefWidth="70" />
+                        <TableColumn fx:id="typeColumn" text="题型" prefWidth="90" />
+                        <TableColumn fx:id="scoreColumn" text="分值" prefWidth="70" />
+                    </columns>
+                </TableView>
+                <TextArea fx:id="questionArea" editable="false" wrapText="true" />
+                <VBox spacing="14">
+                    <padding><Insets bottom="16" left="16" right="16" top="16" /></padding>
+                    <children>
+                        <Label text="作答区" styleClass="field-label" />
+                        <VBox fx:id="choiceBox" spacing="12">
+                            <children>
+                                <RadioButton fx:id="optionAButton" wrapText="true" />
+                                <RadioButton fx:id="optionBButton" wrapText="true" />
+                                <RadioButton fx:id="optionCButton" wrapText="true" />
+                                <RadioButton fx:id="optionDButton" wrapText="true" />
+                            </children>
+                        </VBox>
+                        <TextArea fx:id="answerArea" promptText="主观题请在此输入答案" wrapText="true" VBox.vgrow="ALWAYS" />
+                    </children>
+                </VBox>
+            </items>
+        </SplitPane>
+    </center>
+</BorderPane>
