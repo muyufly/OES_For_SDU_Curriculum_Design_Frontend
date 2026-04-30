@@ -9,8 +9,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class MainApplication extends Application {
-    private static final double LOGIN_WIDTH = 960;
-    private static final double LOGIN_HEIGHT = 640;
+    private static final double LOGIN_WIDTH = 1080;
+    private static final double LOGIN_HEIGHT = 768;
     private static final String GLOBAL_STYLESHEET = MainApplication.class.getResource("css/app-theme.css").toExternalForm();
 
     private static Stage mainStage;
@@ -28,6 +28,7 @@ public class MainApplication extends Application {
         stage.setMinWidth(LOGIN_WIDTH);
         stage.setMinHeight(LOGIN_HEIGHT);
         stage.show();
+        stage.setMaximized(true);
         stage.setOnCloseRequest(event -> {
             if (canClose) {
                 HttpRequestUtil.close();
@@ -40,31 +41,18 @@ public class MainApplication extends Application {
 
     public static void resetStage(String name, Scene scene) {
         applyGlobalStyles(scene);
-        if (stageWidth > 0) {
-            mainStage.setWidth(stageWidth);
-            mainStage.setHeight(stageHeight);
-            mainStage.setX(0);
-            mainStage.setY(0);
-        }
         mainStage.setTitle(name);
         mainStage.setScene(scene);
-        mainStage.setMaximized(true);
         mainStage.show();
+        mainStage.setMaximized(true);
     }
 
     public static void loginStage(String name, Scene scene) {
-        stageWidth = mainStage.getWidth();
-        stageHeight = mainStage.getHeight();
         applyGlobalStyles(scene);
         mainStage.setTitle(name);
         mainStage.setScene(scene);
-        double x = (stageWidth - LOGIN_WIDTH) / 2;
-        double y = (stageHeight - LOGIN_HEIGHT) / 2;
-        mainStage.setX(x);
-        mainStage.setY(y);
-        mainStage.setWidth(LOGIN_WIDTH);
-        mainStage.setHeight(LOGIN_HEIGHT);
         mainStage.show();
+        mainStage.setMaximized(true);
     }
 
     private static void applyGlobalStyles(Scene scene) {

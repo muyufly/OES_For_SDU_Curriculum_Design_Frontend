@@ -21,7 +21,7 @@
            fx:controller="com.teach.javafx.controller.base.LoginController"
            styleClass="login-shell">
     <children>
-        <HBox alignment="CENTER" maxWidth="1180.0" prefWidth="1180.0" styleClass="login-frame">
+        <HBox fx:id="loginFrame" alignment="CENTER" maxWidth="1180.0" prefWidth="1180.0" styleClass="login-frame">
             <children>
                 <VBox fx:id="vbox" spacing="22.0" styleClass="login-hero">
                     <padding>

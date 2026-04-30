@@ -13,7 +13,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.animation.FadeTransition;
+import javafx.animation.ParallelTransition;
+import javafx.animation.ScaleTransition;
+import javafx.util.Duration;
 
 import java.io.IOException;
 
@@ -22,6 +27,8 @@ public class LoginController {
     private TextField usernameField;
     @FXML
     private PasswordField passwordField;
+    @FXML
+    private HBox loginFrame;
     @FXML
     private VBox vbox;
     @FXML
@@ -45,6 +52,21 @@ public class LoginController {
         registerRoleComboBox.getItems().add(new OptionItem(null, "TEACHER", "教师"));
         registerRoleComboBox.getItems().add(new OptionItem(null, "ADMIN", "管理员"));
         registerRoleComboBox.getSelectionModel().selectFirst();
+        
+        // 入场动画
+        loginFrame.setOpacity(0.0);
+        loginFrame.setScaleX(0.92);
+        loginFrame.setScaleY(0.92);
+        
+        FadeTransition ft = new FadeTransition(Duration.millis(800), loginFrame);
+        ft.setToValue(1.0);
+        
+        ScaleTransition st = new ScaleTransition(Duration.millis(800), loginFrame);
+        st.setToX(1.0);
+        st.setToY(1.0);
+        
+        ParallelTransition pt = new ParallelTransition(ft, st);
+        pt.play();
     }
 
     @FXML

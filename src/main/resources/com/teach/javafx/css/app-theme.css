@@ -12,25 +12,24 @@
 }
 
 .login-shell {
-    -fx-background-color:
-        linear-gradient(to bottom right, rgba(143, 17, 21, 0.16), transparent 35%),
-        linear-gradient(to top left, rgba(16, 35, 63, 0.20), transparent 42%),
-        #f7f8fb;
+    -fx-background-image: url('../picture/login-bg.png');
+    -fx-background-size: cover;
+    -fx-background-position: center center;
     -fx-padding: 28;
 }
 
 .login-frame {
-    -fx-background-color: white;
+    -fx-background-color: rgba(255, 255, 255, 0.2);
     -fx-background-radius: 26;
     -fx-border-radius: 26;
-    -fx-border-color: rgba(255, 255, 255, 0.82);
-    -fx-effect: dropshadow(gaussian, rgba(16, 35, 63, 0.22), 34, 0.16, 0, 16);
+    -fx-border-color: rgba(255, 255, 255, 0.4);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 40, 0.2, 0, 20);
 }
 
 .login-hero {
     -fx-pref-width: 460;
     -fx-background-color:
-        linear-gradient(to bottom right, #8f1115, #6f0c12 42%, #10233f 100%);
+        linear-gradient(to bottom right, rgba(143, 17, 21, 0.85), rgba(111, 12, 18, 0.85) 42%, rgba(16, 35, 63, 0.95) 100%);
     -fx-background-radius: 26 0 0 26;
 }
 
@@ -92,7 +91,7 @@
 }
 
 .login-panel {
-    -fx-background-color: white;
+    -fx-background-color: rgba(255, 255, 255, 0.9);
     -fx-background-radius: 0 26 26 0;
 }
 
@@ -129,10 +128,10 @@
 }
 
 .auth-form {
-    -fx-background-color: white;
+    -fx-background-color: rgba(255, 255, 255, 0.85);
     -fx-background-radius: 18;
     -fx-border-radius: 18;
-    -fx-border-color: -oes-line;
+    -fx-border-color: rgba(220, 226, 236, 0.6);
     -fx-effect: dropshadow(gaussian, rgba(16, 35, 63, 0.08), 18, 0.10, 0, 8);
 }
 
