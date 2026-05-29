@@ -28,6 +28,8 @@ public class TeacherGradeController extends ToolController {
     @FXML private TextArea questionArea;
     @FXML private TextArea answerArea;
     @FXML private TextField scoreField;
+    @FXML private ComboBox<Map> aiProviderComboBox;
+    @FXML private TextArea aiSuggestionArea;
 
     private final ObservableList<Map> attempts = FXCollections.observableArrayList();
     private final ObservableList<Map> records = FXCollections.observableArrayList();
@@ -45,9 +47,12 @@ public class TeacherGradeController extends ToolController {
         recordTable.setItems(records);
         examComboBox.setCellFactory(list -> examCell());
         examComboBox.setButtonCell(examCell());
+        aiProviderComboBox.setCellFactory(list -> providerCell());
+        aiProviderComboBox.setButtonCell(providerCell());
         examComboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, newValue) -> loadAttempts());
         attemptTable.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, row) -> loadRecords(row));
         recordTable.getSelectionModel().selectedItemProperty().addListener((obs, oldValue, row) -> showRecord(row));
+        loadAiProviders();
         doRefresh();
     }
 
@@ -107,12 +112,83 @@ public class TeacherGradeController extends ToolController {
         }
     }
 
+    @FXML
+    private void onAiSuggest() {
+        Map row = recordTable.getSelectionModel().getSelectedItem();
+        Integer recordId = intValue(row, "recordId");
+        if (recordId == null) {
+            MessageDialog.showDialog("请先选择答题记录");
+            return;
+        }
+        if (!"READ".equals(text(row, "questionType"))) {
+            MessageDialog.showDialog("AI批改仅用于主观题");
+            return;
+        }
+        DataResponse response = HttpRequestUtil.request("/api/teacher/records/" + recordId + "/ai-grade", aiRequest());
+        if (response != null && response.getCode() == 0 && response.getData() instanceof Map suggestion) {
+            scoreField.setText(text(suggestion, "score"));
+            aiSuggestionArea.setText(formatAiSuggestion(suggestion));
+        } else {
+            MessageDialog.showDialog(response == null ? "AI批改失败" : response.getMsg());
+        }
+    }
+
+    @FXML
+    private void onAiApply() {
+        Map row = recordTable.getSelectionModel().getSelectedItem();
+        Integer recordId = intValue(row, "recordId");
+        if (recordId == null) {
+            MessageDialog.showDialog("请先选择答题记录");
+            return;
+        }
+        if (!"READ".equals(text(row, "questionType"))) {
+            MessageDialog.showDialog("AI批改仅用于主观题");
+            return;
+        }
+        DataResponse response = HttpRequestUtil.request("/api/teacher/records/" + recordId + "/ai-grade/apply", aiRequest());
+        if (response != null && response.getCode() == 0 && response.getData() instanceof Map suggestion) {
+            scoreField.setText(text(suggestion, "score"));
+            aiSuggestionArea.setText(formatAiSuggestion(suggestion));
+            MessageDialog.showDialog("AI批改已应用");
+            loadRecords(attemptTable.getSelectionModel().getSelectedItem());
+            loadAttempts();
+        } else {
+            MessageDialog.showDialog(response == null ? "AI批改失败" : response.getMsg());
+        }
+    }
+
     private void showRecord(Map row) {
         questionArea.setText(text(row, "questionContent"));
         answerArea.setText(text(row, "answer"));
         scoreField.setText(text(row, "score"));
         boolean read = "READ".equals(text(row, "questionType"));
         scoreField.setEditable(read);
+        aiSuggestionArea.clear();
+    }
+
+    private void loadAiProviders() {
+        DataResponse response = HttpRequestUtil.get("/api/teacher/ai/providers");
+        if (response != null && response.getCode() == 0) {
+            aiProviderComboBox.getItems().setAll((List<Map>) response.getData());
+            if (!aiProviderComboBox.getItems().isEmpty()) {
+                aiProviderComboBox.getSelectionModel().selectFirst();
+            }
+        }
+    }
+
+    private DataRequest aiRequest() {
+        DataRequest request = new DataRequest();
+        Map provider = aiProviderComboBox.getSelectionModel().getSelectedItem();
+        request.add("provider", text(provider, "name"));
+        return request;
+    }
+
+    private String formatAiSuggestion(Map suggestion) {
+        return "Provider: " + text(suggestion, "provider") +
+                "\nScore: " + text(suggestion, "score") + " / " + text(suggestion, "maxScore") +
+                "\nConfidence: " + text(suggestion, "confidence") +
+                "\nCache: " + text(suggestion, "cacheHit") +
+                "\nReason: " + text(suggestion, "reason");
     }
 
     private ListCell<Map> examCell() {
@@ -121,6 +197,16 @@ public class TeacherGradeController extends ToolController {
             protected void updateItem(Map item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty || item == null ? "" : text(item, "title"));
+            }
+        };
+    }
+
+    private ListCell<Map> providerCell() {
+        return new ListCell<>() {
+            @Override
+            protected void updateItem(Map item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? "" : text(item, "name") + " · " + text(item, "model"));
             }
         };
     }

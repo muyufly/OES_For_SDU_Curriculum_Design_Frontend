@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
@@ -111,6 +112,80 @@
                                 <TableColumn fx:id="examCreatorColumn" text="创建人" prefWidth="140" />
                             </columns>
                         </TableView>
+                    </center>
+                </BorderPane>
+            </Tab>
+            <Tab text="AI API配置">
+                <BorderPane>
+                    <top>
+                        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="toolbar-row">
+                            <Button text="新增" onAction="#onNewAiProvider" />
+                            <Button text="保存" onAction="#onSaveAiProvider" styleClass="primary-button" />
+                            <Button text="删除" onAction="#onDeleteAiProvider" />
+                            <Label text="配置同步到数据库，教师端只显示已启用的模型。" />
+                        </HBox>
+                    </top>
+                    <center>
+                        <HBox spacing="12">
+                            <padding>
+                                <Insets bottom="12" left="12" right="12" top="0" />
+                            </padding>
+                            <TableView fx:id="aiProviderTable" prefWidth="520" HBox.hgrow="ALWAYS">
+                                <columns>
+                                    <TableColumn fx:id="aiNameColumn" text="名称" prefWidth="150" />
+                                    <TableColumn fx:id="aiProviderColumn" text="厂商" prefWidth="100" />
+                                    <TableColumn fx:id="aiModelColumn" text="模型" prefWidth="170" />
+                                    <TableColumn fx:id="aiEnabledColumn" text="启用" prefWidth="80" />
+                                </columns>
+                            </TableView>
+                            <ScrollPane fitToWidth="true" fitToHeight="true" prefWidth="540" HBox.hgrow="ALWAYS" styleClass="form-scroll">
+                                <content>
+                                    <VBox spacing="10" maxWidth="1.7976931348623157E308" styleClass="page-card">
+                                        <padding>
+                                            <Insets bottom="14" left="14" right="14" top="14" />
+                                        </padding>
+                                        <children>
+                                    <Label text="名称" styleClass="field-label" />
+                                    <TextField fx:id="aiNameField" promptText="例如 OpenAI 主账号 / DeepSeek 备用" />
+                                    <Label text="厂商类型" styleClass="field-label" />
+                                    <ComboBox fx:id="aiProviderTypeBox" maxWidth="1.7976931348623157E308" />
+                                    <Label text="Endpoint" styleClass="field-label" />
+                                    <TextField fx:id="aiEndpointField" promptText="https://api.openai.com/v1/chat/completions" />
+                                    <Label text="模型" styleClass="field-label" />
+                                    <TextField fx:id="aiModelField" promptText="gpt-4o-mini / deepseek-chat / custom-model" />
+                                    <Label text="API Key 环境变量" styleClass="field-label" />
+                                    <TextField fx:id="aiApiKeyEnvField" promptText="OPENAI_API_KEY / DEEPSEEK_API_KEY" />
+                                    <Label text="API Key 直接保存（可选）" styleClass="field-label" />
+                                    <TextField fx:id="aiApiKeyField" promptText="留空则不覆盖已保存密钥" />
+                                    <HBox spacing="8">
+                                        <children>
+                                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                                <children>
+                                                    <Label text="Temperature" styleClass="field-label" />
+                                                    <TextField fx:id="aiTemperatureField" text="0.0" />
+                                                </children>
+                                            </VBox>
+                                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                                <children>
+                                                    <Label text="Max Tokens" styleClass="field-label" />
+                                                    <TextField fx:id="aiMaxTokensField" text="500" />
+                                                </children>
+                                            </VBox>
+                                            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                                                <children>
+                                                    <Label text="Timeout 秒" styleClass="field-label" />
+                                                    <TextField fx:id="aiTimeoutField" text="30" />
+                                                </children>
+                                            </VBox>
+                                        </children>
+                                    </HBox>
+                                    <Label text="是否启用" styleClass="field-label" />
+                                    <ComboBox fx:id="aiEnabledBox" maxWidth="1.7976931348623157E308" />
+                                        </children>
+                                    </VBox>
+                                </content>
+                            </ScrollPane>
+                        </HBox>
                     </center>
                 </BorderPane>
             </Tab>

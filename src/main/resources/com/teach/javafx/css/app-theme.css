@@ -377,15 +377,33 @@
     -fx-background-color: transparent;
 }
 
+.scroll-bar:vertical {
+    -fx-pref-width: 12;
+}
+
+.scroll-bar:horizontal {
+    -fx-pref-height: 12;
+}
+
 .scroll-bar .thumb {
     -fx-background-color: #c2ccda;
     -fx-background-radius: 7;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #8fa0b7;
 }
 
 .scroll-bar .increment-button,
 .scroll-bar .decrement-button {
     -fx-background-color: transparent;
     -fx-padding: 0;
+}
+
+.form-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+    -fx-border-color: transparent;
 }
 
 .radio-button {

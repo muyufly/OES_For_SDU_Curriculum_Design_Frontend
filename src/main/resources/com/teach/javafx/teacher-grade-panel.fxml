@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.teach.javafx.controller.TeacherGradeController">
     <top>
         <HBox spacing="10" alignment="CENTER_LEFT" styleClass="panel-toolbar">
-            <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+            <padding>
+                <Insets bottom="10" left="10" right="10" top="10" />
+            </padding>
             <children>
                 <Label text="选择试卷" />
                 <ComboBox fx:id="examComboBox" prefWidth="340" />
@@ -32,13 +45,24 @@
                         <TableColumn fx:id="scoreColumn" text="得分" prefWidth="80" />
                     </columns>
                 </TableView>
-                <VBox spacing="10">
-                    <padding><Insets bottom="10" left="10" right="10" top="10" /></padding>
+                <VBox spacing="10" styleClass="page-card">
+                    <padding>
+                        <Insets bottom="10" left="10" right="10" top="10" />
+                    </padding>
                     <children>
                         <Label text="题目" styleClass="field-label" />
-                        <TextArea fx:id="questionArea" editable="false" prefRowCount="5" />
+                        <TextArea fx:id="questionArea" editable="false" prefRowCount="4" wrapText="true" />
                         <Label text="学生答案" styleClass="field-label" />
-                        <TextArea fx:id="answerArea" editable="false" prefRowCount="6" VBox.vgrow="ALWAYS" />
+                        <TextArea fx:id="answerArea" editable="false" prefRowCount="5" wrapText="true" VBox.vgrow="ALWAYS" />
+                        <HBox spacing="8" alignment="CENTER_LEFT">
+                            <children>
+                                <Label text="AI厂商" />
+                                <ComboBox fx:id="aiProviderComboBox" prefWidth="190" />
+                                <Button text="AI建议" onAction="#onAiSuggest" styleClass="secondary-button" />
+                                <Button text="AI批改并应用" onAction="#onAiApply" styleClass="secondary-button" />
+                            </children>
+                        </HBox>
+                        <TextArea fx:id="aiSuggestionArea" editable="false" prefRowCount="4" promptText="AI批改建议会显示在这里，教师可审核后提交。" wrapText="true" />
                         <HBox spacing="8" alignment="CENTER_LEFT">
                             <children>
                                 <Label text="分数" />

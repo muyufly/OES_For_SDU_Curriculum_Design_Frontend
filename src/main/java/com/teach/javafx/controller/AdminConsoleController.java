@@ -57,11 +57,28 @@ public class AdminConsoleController extends ToolController {
     @FXML private TableColumn<Map, String> scoreCourseColumn;
     @FXML private TableColumn<Map, String> scoreMarkColumn;
 
+    @FXML private TableView<Map> aiProviderTable;
+    @FXML private TableColumn<Map, String> aiNameColumn;
+    @FXML private TableColumn<Map, String> aiProviderColumn;
+    @FXML private TableColumn<Map, String> aiModelColumn;
+    @FXML private TableColumn<Map, String> aiEnabledColumn;
+    @FXML private TextField aiNameField;
+    @FXML private ComboBox<String> aiProviderTypeBox;
+    @FXML private TextField aiEndpointField;
+    @FXML private TextField aiModelField;
+    @FXML private TextField aiApiKeyEnvField;
+    @FXML private TextField aiApiKeyField;
+    @FXML private TextField aiTemperatureField;
+    @FXML private TextField aiMaxTokensField;
+    @FXML private TextField aiTimeoutField;
+    @FXML private ComboBox<String> aiEnabledBox;
+
     private final ObservableList<Map> users = FXCollections.observableArrayList();
     private final ObservableList<Map> teachers = FXCollections.observableArrayList();
     private final ObservableList<Map> bindings = FXCollections.observableArrayList();
     private final ObservableList<Map> exams = FXCollections.observableArrayList();
     private final ObservableList<Map> scores = FXCollections.observableArrayList();
+    private final ObservableList<Map> aiProviders = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
@@ -71,11 +88,16 @@ public class AdminConsoleController extends ToolController {
         examStatusBox.getItems().setAll("全部", "DRAFT", "OPEN", "CLOSED");
         examStatusBox.getSelectionModel().selectFirst();
         examStatusEditBox.getItems().setAll("DRAFT", "OPEN", "CLOSED");
+        aiProviderTypeBox.getItems().setAll("mock", "openai", "deepseek", "custom");
+        aiProviderTypeBox.setValue("mock");
+        aiEnabledBox.getItems().setAll("true", "false");
+        aiEnabledBox.setValue("true");
 
         bindUserColumns();
         bindTeacherColumns();
         bindExamColumns();
         bindScoreColumns();
+        bindAiColumns();
 
         classComboBox.setCellFactory(list -> classCell());
         classComboBox.setButtonCell(classCell());
@@ -219,6 +241,63 @@ public class AdminConsoleController extends ToolController {
         }
     }
 
+    @FXML
+    private void onNewAiProvider() {
+        aiProviderTable.getSelectionModel().clearSelection();
+        aiNameField.clear();
+        aiProviderTypeBox.setValue("mock");
+        aiEndpointField.clear();
+        aiModelField.setText("local-keyword-rubric");
+        aiApiKeyEnvField.clear();
+        aiApiKeyField.clear();
+        aiTemperatureField.setText("0.0");
+        aiMaxTokensField.setText("500");
+        aiTimeoutField.setText("30");
+        aiEnabledBox.setValue("true");
+    }
+
+    @FXML
+    private void onSaveAiProvider() {
+        Map selected = aiProviderTable.getSelectionModel().getSelectedItem();
+        DataRequest request = new DataRequest();
+        request.add("provider", aiForm());
+        DataResponse response = selected == null || text(selected, "id").isBlank()
+                ? HttpRequestUtil.request("/api/admin/ai/providers", request)
+                : HttpRequestUtil.put("/api/admin/ai/providers/" + text(selected, "id"), request);
+        if (ok(response)) {
+            MessageDialog.showDialog("AI API配置已保存");
+            loadAiProviders();
+        } else {
+            showError(response, "AI API配置保存失败");
+        }
+    }
+
+    @FXML
+    private void onDeleteAiProvider() {
+        Map selected = aiProviderTable.getSelectionModel().getSelectedItem();
+        if (selected == null || text(selected, "id").isBlank()) {
+            MessageDialog.showDialog("请选择要删除的 API 配置");
+            return;
+        }
+        DataResponse response = HttpRequestUtil.delete("/api/admin/ai/providers/" + text(selected, "id"));
+        if (ok(response)) {
+            MessageDialog.showDialog("AI API配置已删除");
+            loadAiProviders();
+            onNewAiProvider();
+        } else {
+            showError(response, "AI API配置删除失败");
+        }
+    }
+
+    private void loadAiProviders() {
+        DataResponse response = HttpRequestUtil.get("/api/admin/ai/providers");
+        if (ok(response)) {
+            aiProviders.setAll((List<Map>) response.getData());
+        } else {
+            showError(response, "AI API配置加载失败");
+        }
+    }
+
     private void loadAll() {
         loadOverview();
         onQueryUsers();
@@ -227,6 +306,7 @@ public class AdminConsoleController extends ToolController {
         loadBindings();
         onQueryExams();
         onLoadScores();
+        loadAiProviders();
     }
 
     private void loadOverview() {
@@ -302,6 +382,46 @@ public class AdminConsoleController extends ToolController {
         scoreCourseColumn.setCellValueFactory(new MapValueFactory<>("courseName"));
         scoreMarkColumn.setCellValueFactory(new MapValueFactory<>("mark"));
         scoreTable.setItems(scores);
+    }
+
+    private void bindAiColumns() {
+        aiNameColumn.setCellValueFactory(new MapValueFactory<>("name"));
+        aiProviderColumn.setCellValueFactory(new MapValueFactory<>("provider"));
+        aiModelColumn.setCellValueFactory(new MapValueFactory<>("model"));
+        aiEnabledColumn.setCellValueFactory(new MapValueFactory<>("enabled"));
+        aiProviderTable.setItems(aiProviders);
+        aiProviderTable.getSelectionModel().selectedItemProperty().addListener((obs, old, row) -> showAiProvider(row));
+    }
+
+    private void showAiProvider(Map row) {
+        if (row == null) {
+            return;
+        }
+        aiNameField.setText(text(row, "name"));
+        aiProviderTypeBox.setValue(text(row, "provider").isBlank() ? "custom" : text(row, "provider"));
+        aiEndpointField.setText(text(row, "endpoint"));
+        aiModelField.setText(text(row, "model"));
+        aiApiKeyEnvField.setText(text(row, "apiKeyEnv"));
+        aiApiKeyField.clear();
+        aiTemperatureField.setText(text(row, "temperature").isBlank() ? "0.0" : text(row, "temperature"));
+        aiMaxTokensField.setText(text(row, "maxTokens").isBlank() ? "500" : text(row, "maxTokens"));
+        aiTimeoutField.setText(text(row, "timeoutSeconds").isBlank() ? "30" : text(row, "timeoutSeconds"));
+        aiEnabledBox.setValue(text(row, "enabled").isBlank() ? "true" : text(row, "enabled"));
+    }
+
+    private Map<String, Object> aiForm() {
+        java.util.LinkedHashMap<String, Object> form = new java.util.LinkedHashMap<>();
+        form.put("name", aiNameField.getText());
+        form.put("provider", aiProviderTypeBox.getValue());
+        form.put("endpoint", aiEndpointField.getText());
+        form.put("model", aiModelField.getText());
+        form.put("apiKeyEnv", aiApiKeyEnvField.getText());
+        form.put("apiKey", aiApiKeyField.getText());
+        form.put("temperature", aiTemperatureField.getText());
+        form.put("maxTokens", aiMaxTokensField.getText());
+        form.put("timeoutSeconds", aiTimeoutField.getText());
+        form.put("enabled", Boolean.parseBoolean(aiEnabledBox.getValue()));
+        return form;
     }
 
     private ListCell<Map> classCell() {

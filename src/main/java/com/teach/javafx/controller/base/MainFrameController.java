@@ -207,7 +207,9 @@ public class MainFrameController {
             if (scene == null) {
                 FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource(name + ".fxml"));
                 try {
-                    scene = new Scene(fxmlLoader.load(), 1024, 768);
+                    javafx.scene.Parent root = fxmlLoader.load();
+                    MainApplication.prepareScrollableLists(root);
+                    scene = new Scene(root, 1024, 768);
                     sceneMap.put(name, scene);
                 } catch (IOException e) {
                     e.printStackTrace();

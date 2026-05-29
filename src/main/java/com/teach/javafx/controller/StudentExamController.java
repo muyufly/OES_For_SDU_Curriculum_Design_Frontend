@@ -59,7 +59,10 @@ public class StudentExamController extends ToolController {
         }
         try {
             FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource("student-exam-window.fxml"));
-            Scene scene = new Scene(loader.load(), 1180, 760);
+            javafx.scene.Parent root = loader.load();
+            MainApplication.prepareScrollableLists(root);
+            Scene scene = new Scene(root, 1180, 760);
+            scene.getStylesheets().add(MainApplication.class.getResource("css/app-theme.css").toExternalForm());
             Stage stage = new Stage();
             stage.initOwner(MainApplication.getMainStage());
             stage.initModality(Modality.NONE);
