@@ -30,8 +30,7 @@
                     <children>
                         <HBox alignment="CENTER_LEFT" spacing="18.0">
                             <children>
-                                <ImageView fitHeight="112.0" fitWidth="112.0" pickOnBounds="true" preserveRatio="true"
-                                           styleClass="brand-logo">
+                                <ImageView fitHeight="112.0" fitWidth="112.0" pickOnBounds="true" preserveRatio="true" styleClass="brand-logo">
                                     <image>
                                         <Image url="@../picture/oes-logo.png" />
                                     </image>
@@ -45,7 +44,7 @@
                                 </VBox>
                             </children>
                         </HBox>
-                        <Label text="以更清晰的考试流程、更稳妥的权限控制和更友好的桌面体验，支撑管理员、教师、学生三类用户的日常教学评测。"
+                        <Label text="面向管理员、教师和学生的课程考试平台。试卷上传、在线答题、自动保存、教师批改和成绩统计都在一个桌面端内完成。"
                                styleClass="hero-copy" wrapText="true" />
                         <Separator />
                         <VBox spacing="10.0" styleClass="hero-card">
@@ -59,7 +58,7 @@
                         <VBox spacing="10.0" styleClass="hero-card hero-card-muted">
                             <children>
                                 <Label text="核心能力" styleClass="hero-section-title" />
-                                <Label text="登录、注册、考试查看、答题提交、教师批改" styleClass="hero-bullet" />
+                                <Label text="注册、考试、草稿保存、试卷批改、统计分析、管理员监管" styleClass="hero-bullet" />
                                 <Label text="后端地址：http://localhost:22222" styleClass="hero-bullet" />
                             </children>
                         </VBox>
@@ -75,7 +74,7 @@
                         <VBox spacing="6.0">
                             <children>
                                 <Label text="欢迎回来" styleClass="panel-title" />
-                                <Label text="登录或注册账号，开始使用 OES 课程考试平台。" styleClass="panel-subtitle" />
+                                <Label text="登录或创建账号，继续使用 OES 课程考试平台。" styleClass="panel-subtitle" />
                             </children>
                         </VBox>
                         <TabPane tabClosingPolicy="UNAVAILABLE" styleClass="auth-tabs" VBox.vgrow="ALWAYS">

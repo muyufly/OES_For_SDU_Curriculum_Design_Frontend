@@ -13,6 +13,7 @@
         <javafx.version>21</javafx.version>
         <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
         <controlsfx.version>11.2.1</controlsfx.version>
+        <atlantafx.version>2.1.0</atlantafx.version>
         <ikonli.version>12.3.1</ikonli.version>
         <poi.version>5.2.2</poi.version>
         <lombok.version>1.18.38</lombok.version>
@@ -56,6 +57,11 @@
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
             <version>${controlsfx.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.mkpaz</groupId>
+            <artifactId>atlantafx-base</artifactId>
+            <version>${atlantafx.version}</version>
         </dependency>
 
         <!-- Icons -->

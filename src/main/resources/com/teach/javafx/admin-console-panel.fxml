@@ -21,24 +21,21 @@
             </padding>
             <HBox alignment="CENTER_LEFT" spacing="14">
                 <Label text="管理员控制台" styleClass="page-title" />
-                <Button text="刷新全部" onAction="#onRefresh" styleClass="primary-button" />
+                <Button text="刷新" onAction="#onRefresh" styleClass="primary-button" />
             </HBox>
             <Label fx:id="overviewLabel" text="正在加载系统总览..." styleClass="summary-text" wrapText="true" />
         </VBox>
     </top>
     <center>
-        <TabPane tabClosingPolicy="UNAVAILABLE">
+        <TabPane tabClosingPolicy="UNAVAILABLE" styleClass="content-tabs">
             <Tab text="用户角色">
                 <BorderPane>
                     <top>
                         <HBox spacing="10" alignment="CENTER_LEFT" styleClass="toolbar-row">
-                            <padding>
-                                <Insets bottom="10" left="12" right="12" top="12" />
-                            </padding>
-                            <TextField fx:id="userKeywordField" promptText="用户名/姓名/工号" prefWidth="220" />
+                            <TextField fx:id="userKeywordField" promptText="账号 / 姓名 / 工号" prefWidth="220" />
                             <ComboBox fx:id="roleFilterBox" prefWidth="150" />
                             <Button text="查询" onAction="#onQueryUsers" />
-                            <Label text="修改为" />
+                            <Label text="角色改为" />
                             <ComboBox fx:id="roleEditBox" prefWidth="160" />
                             <Button text="更新角色" onAction="#onUpdateUserRole" styleClass="primary-button" />
                         </HBox>
@@ -59,10 +56,7 @@
                 <BorderPane>
                     <top>
                         <HBox spacing="10" alignment="CENTER_LEFT" styleClass="toolbar-row">
-                            <padding>
-                                <Insets bottom="10" left="12" right="12" top="12" />
-                            </padding>
-                            <TextField fx:id="teacherKeywordField" promptText="教师编号/姓名/学院" prefWidth="220" />
+                            <TextField fx:id="teacherKeywordField" promptText="教师编号 / 姓名 / 学院" prefWidth="220" />
                             <Button text="查询教师" onAction="#onQueryTeachers" />
                             <Label text="绑定班级" />
                             <ComboBox fx:id="classComboBox" prefWidth="220" />
@@ -80,7 +74,7 @@
                                     <TableColumn fx:id="teacherNumColumn" text="教师号" prefWidth="120" />
                                     <TableColumn fx:id="teacherNameColumn" text="姓名" prefWidth="130" />
                                     <TableColumn fx:id="teacherDeptColumn" text="学院" prefWidth="160" />
-                                    <TableColumn fx:id="teacherClassCountColumn" text="已绑定班级数" prefWidth="110" />
+                                    <TableColumn fx:id="teacherClassCountColumn" text="已绑定班级" prefWidth="120" />
                                 </columns>
                             </TableView>
                             <TableView fx:id="bindingTable" prefWidth="560">
@@ -98,10 +92,7 @@
                 <BorderPane>
                     <top>
                         <HBox spacing="10" alignment="CENTER_LEFT" styleClass="toolbar-row">
-                            <padding>
-                                <Insets bottom="10" left="12" right="12" top="12" />
-                            </padding>
-                            <TextField fx:id="examKeywordField" promptText="试卷/课程/创建人" prefWidth="240" />
+                            <TextField fx:id="examKeywordField" promptText="试卷 / 课程 / 创建人" prefWidth="240" />
                             <ComboBox fx:id="examStatusBox" prefWidth="130" />
                             <Button text="查询" onAction="#onQueryExams" />
                             <Label text="状态改为" />
@@ -127,10 +118,7 @@
                 <BorderPane>
                     <top>
                         <HBox spacing="10" alignment="CENTER_LEFT" styleClass="toolbar-row">
-                            <padding>
-                                <Insets bottom="10" left="12" right="12" top="12" />
-                            </padding>
-                            <Button text="加载前200条成绩" onAction="#onLoadScores" styleClass="primary-button" />
+                            <Button text="加载前 200 条成绩" onAction="#onLoadScores" styleClass="primary-button" />
                             <Label text="用于管理员快速抽查全局成绩数据，不替代教师端精细批改。" />
                         </HBox>
                     </top>

@@ -1,5 +1,6 @@
 package com.teach.javafx;
 
+import atlantafx.base.theme.PrimerLight;
 import com.teach.javafx.request.HttpRequestUtil;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -20,6 +21,7 @@ public class MainApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("base/login-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), LOGIN_WIDTH, LOGIN_HEIGHT);
         applyGlobalStyles(scene);

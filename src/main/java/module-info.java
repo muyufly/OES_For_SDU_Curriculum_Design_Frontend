@@ -9,6 +9,7 @@ module com.teach.javafx {
     requires java.sql;
     requires com.google.gson;
     requires org.controlsfx.controls;
+    requires atlantafx.base;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.ikonli.fontawesome5;
     requires org.apache.poi.ooxml;
